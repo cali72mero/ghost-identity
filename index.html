@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🕵️ Ghost Identity | Professional Fake Data Generator</title>
+    <style>
+        :root {
+            --primary: #10b981;
+            --primary-glow: #059669;
+            --bg-dark: #0f172a;
+            --bg-panel: #1e293b;
+            --text: #f8fafc;
+            --text-dim: #94a3b8;
+            --border: #334155;
+            --danger: #ef4444;
+            --accent: #3b82f6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            padding: 40px 0;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+        }
+
+        .subtitle {
+            color: var(--text-dim);
+            font-size: 1.1rem;
+        }
+
+        /* Controls Panel */
+        .controls {
+            background: var(--bg-panel);
+            padding: 20px;
+            border-radius: 15px;
+            border: 1px solid var(--border);
+            margin-bottom: 30px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .control-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-dim);
+            font-size: 0.9rem;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 10px;
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 1rem;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--bg-dark);
+            width: 100%;
+            font-size: 1.1rem;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-glow);
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-danger {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+            border: 1px solid var(--danger);
+        }
+
+        .btn-secondary {
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            color: var(--text);
+        }
+
+        /* Identity Card */
+        .identity-card {
+            background: var(--bg-panel);
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            transition: all 0.3s;
+        }
+
+        .id-header {
+            background: linear-gradient(90deg, var(--bg-dark), var(--bg-panel));
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .country-flag {
+            font-size: 2rem;
+        }
+
+        .id-body {
+            padding: 30px;
+            display: grid;
+            grid-template-columns: 150px 1fr;
+            gap: 30px;
+        }
+
+        .avatar {
+            width: 150px;
+            height: 150px;
+            background: var(--bg-dark);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            border: 2px solid var(--border);
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .info-item {
+            position: relative;
+        }
+
+        .info-label {
+            color: var(--text-dim);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            font-size: 1.1rem;
+            font-family: monospace;
+            background: rgba(0,0,0,0.2);
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .info-value:hover {
+            border-color: var(--primary);
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .copy-icon {
+            opacity: 0.5;
+            font-size: 0.9rem;
+        }
+
+        /* Saved Identities */
+        .saved-section {
+            margin-top: 40px;
+        }
+
+        .saved-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .saved-list {
+            display: grid;
+            gap: 15px;
+        }
+
+        .saved-item {
+            background: var(--bg-panel);
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .saved-info strong {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--primary);
+        }
+
+        .action-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            justify-content: center;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--primary);
+            color: var(--bg-dark);
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: 600;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        @media (max-width: 768px) {
+            .id-body {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            .avatar {
+                margin: 0 auto;
+            }
+            .info-grid {
+                grid-template-columns: 1fr;
+                text-align: left;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🕵️ Ghost Identity</h1>
+            <p class="subtitle">Professioneller Fake-Daten Generator & Identitäts-Manager</p>
+            <div style="margin-top: 15px; font-size: 0.9rem; color: var(--text-dim);">
+                🛡️ 100% Lokal • Keine Server • Daten bleiben auf deinem Gerät
+            </div>
+        </header>
+
+        <div class="controls">
+            <div class="control-group">
+                <label>🌍 Land / Region</label>
+                <select id="country">
+                    <option value="de">🇩🇪 Deutschland</option>
+                    <option value="us">🇺🇸 USA</option>
+                    <option value="gb">🇬🇧 UK</option>
+                    <option value="fr">🇫🇷 Frankreich</option>
+                    <option value="jp">🇯🇵 Japan</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>🚻 Geschlecht</label>
+                <select id="gender">
+                    <option value="random">🎲 Zufällig</option>
+                    <option value="male">👨 Männlich</option>
+                    <option value="female">👩 Weiblich</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>📅 Alter</label>
+                <select id="ageRange">
+                    <option value="18-30">18 - 30 Jahre</option>
+                    <option value="30-50" selected>30 - 50 Jahre</option>
+                    <option value="50-70">50 - 70 Jahre</option>
+                </select>
+            </div>
+            <div style="display: flex; align-items: end;">
+                <button class="btn btn-primary" onclick="generateIdentity()">
+                    🎲 Identität generieren
+                </button>
+            </div>
+        </div>
+
+        <div id="identityCard" class="identity-card" style="display: none;">
+            <div class="id-header">
+                <div style="font-weight: bold; letter-spacing: 2px;">IDENTITÄTS-KARTE</div>
+                <div class="country-flag" id="displayFlag">🇩🇪</div>
+            </div>
+            <div class="id-body">
+                <div class="avatar" id="avatar">👤</div>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">Vollständiger Name</div>
+                        <div class="info-value" onclick="copyText(this)">
+                            <span id="fullName">-</span>
+                            <span class="copy-icon">📋</span>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Geburtsdatum</div>
+                        <div class="info-value" onclick="copyText(this)">
+                            <span id="birthDate">-</span>
+                            <span class="copy-icon">📋</span>
+                        </div>
+                    </div>
+                    <div class="info-item" style="grid-column: span 2;">
+                        <div class="info-label">Adresse</div>
+                        <div class="info-value" onclick="copyText(this)">
+                            <span id="address">-</span>
+                            <span class="copy-icon">📋</span>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Telefon</div>
+                        <div class="info-value" onclick="copyText(this)">
+                            <span id="phone">-</span>
+                            <span class="copy-icon">📋</span>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">E-Mail</div>
+                        <div class="info-value" onclick="copyText(this)">
+                            <span id="email">-</span>
+                            <span class="copy-icon">📋</span>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Benutzername</div>
+                        <div class="info-value" onclick="copyText(this)">
+                            <span id="username">-</span>
+                            <span class="copy-icon">📋</span>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Passwort</div>
+                        <div class="info-value" onclick="copyText(this)">
+                            <span id="password">-</span>
+                            <span class="copy-icon">📋</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="padding: 20px; background: rgba(0,0,0,0.2); text-align: center;">
+                <button class="btn btn-primary" onclick="saveCurrentIdentity()" style="width: auto;">
+                    💾 Identität speichern
+                </button>
+            </div>
+        </div>
+
+        <div class="saved-section">
+            <div class="saved-header">
+                <h2>📂 Gespeicherte Identitäten (<span id="savedCount">0</span>)</h2>
+                <div class="action-row" style="margin: 0;">
+                    <button class="btn btn-secondary" onclick="exportData()">📤 Backup Exportieren</button>
+                    <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">📥 Backup Importieren</button>
+                    <input type="file" id="importFile" style="display: none;" onchange="importData(event)" accept=".json">
+                    <button class="btn btn-danger" onclick="clearAllData()">🗑️ Alles Löschen</button>
+                </div>
+            </div>
+            <div id="savedList" class="saved-list">
+                <!-- Saved items go here -->
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast">✅ Kopiert!</div>
+
+    <script>
+        // Data Pools
+        const data = {
+            de: {
+                firstNamesMale: ["Max", "Paul", "Leon", "Lukas", "Felix", "Jonas", "Elias", "Tim", "Jan", "Niklas"],
+                firstNamesFemale: ["Mia", "Emma", "Sofia", "Hannah", "Anna", "Lea", "Lena", "Marie", "Laura", "Julia"],
+                lastNames: ["Müller", "Schmidt", "Schneider", "Fischer", "Weber", "Meyer", "Wagner", "Becker", "Schulz", "Hoffmann"],
+                cities: ["Berlin", "Hamburg", "München", "Köln", "Frankfurt", "Stuttgart", "Düsseldorf", "Leipzig"],
+                streets: ["Hauptstraße", "Bahnhofstraße", "Schulstraße", "Gartenstraße", "Dorfstraße", "Bergstraße"],
+                domains: ["web.de", "gmx.de", "t-online.de", "freenet.de"]
+            },
+            us: {
+                firstNamesMale: ["James", "John", "Robert", "Michael", "William", "David", "Richard", "Joseph", "Thomas"],
+                firstNamesFemale: ["Mary", "Patricia", "Jennifer", "Linda", "Elizabeth", "Barbara", "Susan", "Jessica"],
+                lastNames: ["Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller", "Davis", "Rodriguez"],
+                cities: ["New York", "Los Angeles", "Chicago", "Houston", "Phoenix", "Philadelphia", "San Antonio"],
+                streets: ["Main St", "Broadway", "Maple Ave", "Oak St", "Washington St", "Park Ave"],
+                domains: ["gmail.com", "yahoo.com", "outlook.com", "aol.com"]
+            },
+            // Simplified data for other countries for brevity
+            gb: {
+                firstNamesMale: ["Oliver", "George", "Harry", "Jack"],
+                firstNamesFemale: ["Olivia", "Amelia", "Isla", "Ava"],
+                lastNames: ["Smith", "Jones", "Taylor", "Brown"],
+                cities: ["London", "Manchester", "Birmingham", "Leeds"],
+                streets: ["High Street", "Station Road", "London Road"],
+                domains: ["hotmail.co.uk", "yahoo.co.uk"]
+            },
+            fr: {
+                firstNamesMale: ["Gabriel", "Leo", "Raphael", "Arthur"],
+                firstNamesFemale: ["Jade", "Louise", "Emma", "Alice"],
+                lastNames: ["Martin", "Bernard", "Thomas", "Petit"],
+                cities: ["Paris", "Marseille", "Lyon", "Toulouse"],
+                streets: ["Rue de la Paix", "Avenue des Champs-Élysées"],
+                domains: ["orange.fr", "free.fr"]
+            },
+            jp: {
+                firstNamesMale: ["Haruto", "Riku", "Sora", "Ren"],
+                firstNamesFemale: ["Yui", "Rio", "Hina", "Mei"],
+                lastNames: ["Sato", "Suzuki", "Takahashi", "Tanaka"],
+                cities: ["Tokyo", "Osaka", "Kyoto", "Yokohama"],
+                streets: ["Chuo-dori", "Showa-dori"],
+                domains: ["yahoo.co.jp", "docomo.ne.jp"]
+            }
+        };
+
+        let currentIdentity = null;
+        let savedIdentities = JSON.parse(localStorage.getItem('ghost_identities') || '[]');
+
+        function getRandom(arr) {
+            return arr[Math.floor(Math.random() * arr.length)];
+        }
+
+        function generateIdentity() {
+            const country = document.getElementById('country').value;
+            const genderSelect = document.getElementById('gender').value;
+            const ageRange = document.getElementById('ageRange').value;
+            
+            const pool = data[country];
+            let gender = genderSelect === 'random' ? (Math.random() > 0.5 ? 'male' : 'female') : genderSelect;
+            
+            // Name
+            const firstName = gender === 'male' ? getRandom(pool.firstNamesMale) : getRandom(pool.firstNamesFemale);
+            const lastName = getRandom(pool.lastNames);
+            
+            // Address
+            const city = getRandom(pool.cities);
+            const street = getRandom(pool.streets);
+            const houseNum = Math.floor(Math.random() * 150) + 1;
+            const zip = Math.floor(10000 + Math.random() * 90000); // Simple 5 digit ZIP
+            
+            // Age & Birthdate
+            const [minAge, maxAge] = ageRange.split('-').map(Number);
+            const age = Math.floor(Math.random() * (maxAge - minAge + 1)) + minAge;
+            const year = new Date().getFullYear() - age;
+            const month = Math.floor(Math.random() * 12) + 1;
+            const day = Math.floor(Math.random() * 28) + 1;
+            const birthDate = `${day.toString().padStart(2, '0')}.${month.toString().padStart(2, '0')}.${year}`;
+
+            // Digital Identity
+            const cleanName = firstName.toLowerCase() + lastName.toLowerCase();
+            const username = `${cleanName}${year % 100}`;
+            const email = `${cleanName}${Math.floor(Math.random() * 99)}@${getRandom(pool.domains)}`;
+            const password = generatePassword();
+            const phone = generatePhone(country);
+
+            currentIdentity = {
+                id: Date.now(),
+                firstName, lastName, gender, country,
+                address: `${street} ${houseNum}, ${zip} ${city}`,
+                birthDate, age, email, username, password, phone,
+                createdAt: new Date().toISOString()
+            };
+
+            updateUI(currentIdentity);
+        }
+
+        function generatePassword() {
+            const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*";
+            let pass = "";
+            for (let i = 0; i < 16; i++) pass += chars.charAt(Math.floor(Math.random() * chars.length));
+            return pass;
+        }
+
+        function generatePhone(country) {
+            if (country === 'de') return `+49 1${Math.floor(Math.random() * 9)} ${Math.floor(Math.random() * 10000000)}`;
+            if (country === 'us') return `+1 (${Math.floor(200 + Math.random() * 700)}) ${Math.floor(200 + Math.random() * 700)}-${Math.floor(1000 + Math.random() * 9000)}`;
+            return `+${Math.floor(Math.random() * 99)} ${Math.floor(Math.random() * 100000000)}`;
+        }
+
+        function updateUI(id) {
+            document.getElementById('identityCard').style.display = 'block';
+            
+            // Flag
+            const flags = { de: '🇩🇪', us: '🇺🇸', gb: '🇬🇧', fr: '🇫🇷', jp: '🇯🇵' };
+            document.getElementById('displayFlag').textContent = flags[id.country];
+            
+            // Avatar
+            document.getElementById('avatar').textContent = id.gender === 'male' ? '👨' : '👩';
+
+            // Fields
+            document.getElementById('fullName').textContent = `${id.firstName} ${id.lastName}`;
+            document.getElementById('birthDate').textContent = `${id.birthDate} (${id.age} Jahre)`;
+            document.getElementById('address').textContent = id.address;
+            document.getElementById('phone').textContent = id.phone;
+            document.getElementById('email').textContent = id.email;
+            document.getElementById('username').textContent = id.username;
+            document.getElementById('password').textContent = id.password;
+        }
+
+        function copyText(element) {
+            const text = element.querySelector('span').textContent;
+            navigator.clipboard.writeText(text);
+            
+            const toast = document.getElementById('toast');
+            toast.style.opacity = '1';
+            setTimeout(() => toast.style.opacity = '0', 2000);
+            
+            element.style.background = 'rgba(16, 185, 129, 0.2)';
+            setTimeout(() => element.style.background = '', 300);
+        }
+
+        function saveCurrentIdentity() {
+            if (!currentIdentity) return;
+            
+            // Check if already saved (prevent duplicates)
+            const exists = savedIdentities.some(id => id.id === currentIdentity.id);
+            if (exists) {
+                alert('⚠️ Identität bereits gespeichert!');
+                return;
+            }
+
+            savedIdentities.unshift(currentIdentity);
+            saveToStorage();
+            renderSavedList();
+            alert('✅ Identität lokal gespeichert!');
+        }
+
+        function renderSavedList() {
+            const list = document.getElementById('savedList');
+            document.getElementById('savedCount').textContent = savedIdentities.length;
+            list.innerHTML = '';
+
+            if (savedIdentities.length === 0) {
+                list.innerHTML = '<div style="text-align:center; padding: 20px; color: var(--text-dim);">Keine gespeicherten Identitäten.</div>';
+                return;
+            }
+
+            savedIdentities.forEach((id, index) => {
+                const item = document.createElement('div');
+                item.className = 'saved-item';
+                item.innerHTML = `
+                    <div class="saved-info">
+                        <strong>${id.firstName} ${id.lastName} (${id.country.toUpperCase()})</strong>
+                        <span style="font-size: 0.9rem; color: var(--text-dim);">${id.email}</span>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn btn-secondary" style="padding: 8px;" onclick="loadIdentity(${index})">👁️ Ansehen</button>
+                        <button class="btn btn-danger" style="padding: 8px;" onclick="deleteIdentity(${index})">🗑️</button>
+                    </div>
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        function loadIdentity(index) {
+            currentIdentity = savedIdentities[index];
+            updateUI(currentIdentity);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function deleteIdentity(index) {
+            if (confirm('Wirklich löschen?')) {
+                savedIdentities.splice(index, 1);
+                saveToStorage();
+                renderSavedList();
+            }
+        }
+
+        function clearAllData() {
+            if (confirm('⚠️ ACHTUNG: Das löscht ALLE gespeicherten Identitäten unwiderruflich!')) {
+                savedIdentities = [];
+                currentIdentity = null;
+                saveToStorage();
+                renderSavedList();
+                document.getElementById('identityCard').style.display = 'none';
+            }
+        }
+
+        function saveToStorage() {
+            localStorage.setItem('ghost_identities', JSON.stringify(savedIdentities));
+        }
+
+        // Export / Import
+        function exportData() {
+            if (savedIdentities.length === 0) {
+                alert('Keine Daten zum Exportieren!');
+                return;
+            }
+            const dataStr = JSON.stringify(savedIdentities, null, 2);
+            const blob = new Blob([dataStr], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `ghost-identities-backup-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    if (Array.isArray(imported)) {
+                        if (confirm(`${imported.length} Identitäten importieren? Das ergänzt deine bestehende Liste.`)) {
+                            savedIdentities = [...imported, ...savedIdentities];
+                            // Remove duplicates by ID
+                            const unique = [];
+                            const seen = new Set();
+                            for (const id of savedIdentities) {
+                                if (!seen.has(id.id)) {
+                                    seen.add(id.id);
+                                    unique.push(id);
+                                }
+                            }
+                            savedIdentities = unique;
+                            saveToStorage();
+                            renderSavedList();
+                            alert('✅ Import erfolgreich!');
+                        }
+                    } else {
+                        alert('❌ Ungültiges Format!');
+                    }
+                } catch (err) {
+                    alert('❌ Fehler beim Lesen der Datei!');
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = ''; // Reset input
+        }
+
+        // Init
+        window.addEventListener('load', renderSavedList);
+    </script>
+</body>
+</html>
