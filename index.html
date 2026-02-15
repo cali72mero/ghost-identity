@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🕵️ Ghost Identity | v2.0</title>
+    <title>🕵️ Ghost Identity | v2.1</title>
     <style>
         :root {
             --primary: #10b981;
@@ -16,6 +16,7 @@
             --danger: #ef4444;
             --accent: #3b82f6;
             --gold: #fbbf24;
+            --warn: #f59e0b;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -48,8 +49,8 @@
 
         .subtitle { color: var(--text-dim); font-size: 1.1rem; }
         .version-badge { 
-            background: rgba(16, 185, 129, 0.1); color: var(--primary); 
-            padding: 2px 8px; border-radius: 10px; font-size: 0.8rem; border: 1px solid var(--primary);
+            background: rgba(59, 130, 246, 0.2); color: var(--accent); 
+            padding: 2px 8px; border-radius: 10px; font-size: 0.8rem; border: 1px solid var(--accent);
             vertical-align: middle; margin-left: 10px;
         }
 
@@ -67,6 +68,7 @@
 
         .control-group label { display: block; margin-bottom: 8px; color: var(--text-dim); font-size: 0.9rem; }
         select, input { width: 100%; padding: 10px; background: var(--bg-dark); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: 1rem; }
+        input[type="number"] { -moz-appearance: textfield; }
 
         .btn {
             padding: 12px 24px;
@@ -89,8 +91,8 @@
         
         .btn-danger { background: rgba(239, 68, 68, 0.2); color: var(--danger); border: 1px solid var(--danger); }
         .btn-secondary { background: var(--bg-panel); border: 1px solid var(--border); color: var(--text); }
-        .btn-refresh { background: var(--accent); color: white; border: none; padding: 5px 10px; font-size: 0.8rem; }
         .btn-test { background: var(--primary); color: var(--bg-dark); border: none; padding: 5px 10px; font-size: 0.8rem; font-weight: bold; }
+        .btn-refresh { background: var(--accent); color: white; border: none; padding: 5px 10px; font-size: 0.8rem; }
 
         /* Identity Card */
         .identity-card {
@@ -160,6 +162,13 @@
         .cc-number { font-size: 1.2rem; margin: 15px 0 5px; letter-spacing: 2px; font-family: monospace; }
         .cc-name { font-size: 0.9rem; text-transform: uppercase; }
         .cc-exp { position: absolute; bottom: 15px; right: 15px; font-family: monospace; }
+        
+        .cc-warning {
+            grid-column: span 2;
+            font-size: 0.8rem; color: var(--warn); text-align: center;
+            background: rgba(245, 158, 11, 0.1); padding: 5px; border-radius: 5px;
+            border: 1px solid var(--warn); margin-top: -10px;
+        }
 
         /* Inbox Styles */
         .inbox-section {
@@ -181,7 +190,6 @@
         }
 
         .inbox-actions { display: flex; gap: 10px; }
-
         .inbox-list { max-height: 400px; overflow-y: auto; }
         
         .email-item {
@@ -205,65 +213,35 @@
             background: var(--primary); color: var(--bg-dark); 
             padding: 5px 10px; border-radius: 5px; font-weight: bold; font-family: monospace; font-size: 1.2rem;
             box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
-            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        
-        @keyframes popIn { from { transform: translateY(-50%) scale(0); } to { transform: translateY(-50%) scale(1); } }
 
-        .email-view {
-            padding: 20px;
-            background: var(--bg-dark);
-            display: none;
-        }
+        .email-view { padding: 20px; background: var(--bg-dark); display: none; }
         .email-view-header { border-bottom: 1px solid var(--border); padding-bottom: 15px; margin-bottom: 15px; }
         .email-body { line-height: 1.6; white-space: pre-wrap; font-family: sans-serif; }
         
-        .live-dot {
-            width: 10px; height: 10px; background: var(--danger);
-            border-radius: 50%; display: inline-block; margin-right: 5px;
-        }
+        .live-dot { width: 10px; height: 10px; background: var(--danger); border-radius: 50%; display: inline-block; margin-right: 5px; }
         .live-dot.active { background: var(--success); box-shadow: 0 0 10px var(--success); animation: pulse 2s infinite; }
-
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
 
         /* Saved Section */
         .saved-section { margin-top: 40px; }
-        
         .management-bar {
-            background: var(--bg-panel);
-            padding: 20px;
-            border-radius: 15px;
-            border: 1px solid var(--border);
-            margin-bottom: 20px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            justify-content: space-between;
-            align-items: center;
+            background: var(--bg-panel); padding: 20px; border-radius: 15px;
+            border: 1px solid var(--border); margin-bottom: 20px;
+            display: flex; flex-wrap: wrap; gap: 15px; justify-content: space-between; align-items: center;
         }
-
         .saved-list { display: grid; gap: 15px; }
-        
         .saved-item {
-            background: var(--bg-panel); padding: 20px; border-radius: 10px;
-            border: 1px solid var(--border);
-            display: flex; justify-content: space-between; align-items: center;
-            transition: transform 0.2s;
+            background: var(--bg-panel); padding: 20px; border-radius: 10px; border: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center; transition: transform 0.2s;
         }
         .saved-item:hover { transform: translateX(5px); border-color: var(--primary); }
-
         .saved-info strong { display: block; font-size: 1.1rem; margin-bottom: 5px; color: var(--primary); }
         .saved-meta { font-size: 0.9rem; color: var(--text-dim); display: flex; gap: 15px; }
         
         /* Modal */
-        .modal {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8); z-index: 2000; justify-content: center; align-items: center;
-        }
-        .modal-content {
-            background: var(--bg-panel); padding: 30px; border-radius: 15px; 
-            border: 1px solid var(--primary); max-width: 400px; width: 90%; text-align: center;
-        }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; justify-content: center; align-items: center; }
+        .modal-content { background: var(--bg-panel); padding: 30px; border-radius: 15px; border: 1px solid var(--primary); max-width: 400px; width: 90%; text-align: center; }
         .modal input { margin: 15px 0; }
 
         .toast {
@@ -285,10 +263,10 @@
 <body>
     <div class="container">
         <header>
-            <h1>🕵️ Ghost Identity <span class="version-badge">v2.0</span></h1>
+            <h1>🕵️ Ghost Identity <span class="version-badge">v2.1</span></h1>
             <p class="subtitle">Next-Gen Identity Generator & Secure Mail Client</p>
             <div style="margin-top: 15px; font-size: 0.9rem; color: var(--text-dim);">
-                🛡️ AES-256 Backups • 💳 Fake Finanzen • ⚡ Auto-2FA Parser
+                🛡️ AES-256 Backups • 💳 Smart Data • ⚡ Auto-2FA
             </div>
         </header>
 
@@ -313,16 +291,19 @@
                 </select>
             </div>
             <div class="control-group">
-                <label>📅 Alter</label>
-                <select id="ageRange">
-                    <option value="18-30">18 - 30 Jahre</option>
-                    <option value="30-50" selected>30 - 50 Jahre</option>
-                    <option value="50-70">50 - 70 Jahre</option>
+                <label>📅 Alter (14-80)</label>
+                <select id="ageRange" onchange="toggleCustomAge()">
+                    <option value="14-18" selected>14 - 18 (Teenager)</option>
+                    <option value="18-30">18 - 30 (Erwachsen)</option>
+                    <option value="30-50">30 - 50 (Mittelalter)</option>
+                    <option value="50-70">50 - 70 (Senior)</option>
+                    <option value="manual">✍️ Manuelles Alter...</option>
                 </select>
+                <input type="number" id="customAge" placeholder="Alter eingeben" min="14" max="80" style="display: none; margin-top: 5px;">
             </div>
             <div style="display: flex; align-items: end;">
                 <button class="btn btn-primary" onclick="generateIdentity()">
-                    🎲 Identität generieren
+                    🎲 Generieren
                 </button>
             </div>
         </div>
@@ -334,9 +315,7 @@
                 <div class="country-flag" id="displayFlag">🇩🇪</div>
             </div>
             <div class="id-body">
-                <div class="avatar" id="avatar">
-                    <!-- Image injected by JS -->
-                </div>
+                <div class="avatar" id="avatar"></div>
                 <div class="info-grid">
                     <div class="info-item">
                         <div class="info-label">Vollständiger Name</div>
@@ -383,6 +362,7 @@
 
                     <!-- Finance Section -->
                     <div class="finance-section">
+                        <div class="cc-warning">⚠️ Hinweis: Kreditkarte ist formal gültig, hat aber <strong>KEIN GUTHABEN</strong> (Test-Only)</div>
                         <div class="cc-card" onclick="copyCC()">
                             <div class="cc-logo">VISA</div>
                             <div class="cc-number" id="ccNumber">4532 1234 5678 9012</div>
@@ -447,18 +427,15 @@
                     <button class="btn btn-danger" onclick="clearAllData()">🗑️ Alles Löschen</button>
                 </div>
             </div>
-            
             <div id="savedList" class="saved-list"></div>
         </div>
     </div>
 
-    <!-- Export Password Modal -->
+    <!-- Modals -->
     <div id="exportModal" class="modal">
         <div class="modal-content">
             <h3>🔐 Backup Verschlüsseln</h3>
-            <p style="color: var(--text-dim); font-size: 0.9rem;">
-                Optional: Gib ein Passwort ein, um deine Daten sicher mit AES-256 zu verschlüsseln.
-            </p>
+            <p style="color: var(--text-dim); font-size: 0.9rem;">Optional: Gib ein Passwort ein, um deine Daten sicher mit AES-256 zu verschlüsseln.</p>
             <input type="password" id="exportPass" placeholder="Passwort (Optional)">
             <div style="display: flex; gap: 10px; justify-content: center;">
                 <button class="btn btn-secondary" onclick="closeModal('exportModal')">Abbrechen</button>
@@ -466,14 +443,10 @@
             </div>
         </div>
     </div>
-
-    <!-- Import Password Modal -->
     <div id="importModal" class="modal">
         <div class="modal-content">
             <h3>🔓 Backup Entschlüsseln</h3>
-            <p style="color: var(--text-dim); font-size: 0.9rem;">
-                Dieses Backup ist verschlüsselt. Bitte Passwort eingeben.
-            </p>
+            <p style="color: var(--text-dim); font-size: 0.9rem;">Dieses Backup ist verschlüsselt. Bitte Passwort eingeben.</p>
             <input type="password" id="importPass" placeholder="Passwort">
             <div style="display: flex; gap: 10px; justify-content: center;">
                 <button class="btn btn-secondary" onclick="closeModal('importModal')">Abbrechen</button>
@@ -481,46 +454,45 @@
             </div>
         </div>
     </div>
-
     <div id="toast" class="toast">✅ Kopiert!</div>
 
     <script>
-        // Data Pools
+        // EXPANDED DATA POOLS FOR BETTER RANDOMNESS
         const data = {
             de: {
-                firstNamesMale: ["Max", "Paul", "Leon", "Lukas", "Felix", "Jonas", "Elias", "Tim", "Jan", "Niklas"],
-                firstNamesFemale: ["Mia", "Emma", "Sofia", "Hannah", "Anna", "Lea", "Lena", "Marie", "Laura", "Julia"],
-                lastNames: ["Müller", "Schmidt", "Schneider", "Fischer", "Weber", "Meyer", "Wagner", "Becker", "Schulz", "Hoffmann"],
-                cities: ["Berlin", "Hamburg", "München", "Köln", "Frankfurt", "Stuttgart", "Düsseldorf", "Leipzig"],
-                streets: ["Hauptstraße", "Bahnhofstraße", "Schulstraße", "Gartenstraße", "Dorfstraße", "Bergstraße"]
+                firstNamesMale: ["Max", "Paul", "Leon", "Lukas", "Felix", "Jonas", "Elias", "Tim", "Jan", "Niklas", "Ben", "Luis", "Finn", "Noah", "Jakob", "Moritz", "Julian", "Philipp", "David", "Alexander", "Tom", "Simon", "Erik", "Anton", "Maximilian", "Fabian", "Hannes", "Leo", "Mats", "Lenny", "Oskar", "Theo", "Liam", "Marlon", "Emil", "Henry", "Samuel", "Johann", "Valentin", "Vincent"],
+                firstNamesFemale: ["Mia", "Emma", "Sofia", "Hannah", "Anna", "Lea", "Lena", "Marie", "Laura", "Julia", "Emilia", "Lina", "Mila", "Sophie", "Clara", "Lara", "Luisa", "Johanna", "Mathilda", "Nele", "Frieda", "Ida", "Lotte", "Amelie", "Maja", "Ella", "Charlotte", "Paula", "Lilly", "Greta", "Lisa", "Melina", "Zoe", "Mara", "Elena", "Sarah", "Jana", "Mira", "Pia", "Viktoria"],
+                lastNames: ["Müller", "Schmidt", "Schneider", "Fischer", "Weber", "Meyer", "Wagner", "Becker", "Schulz", "Hoffmann", "Schäfer", "Koch", "Bauer", "Richter", "Klein", "Wolf", "Schröder", "Neumann", "Schwarz", "Zimmermann", "Braun", "Krüger", "Hofmann", "Hartmann", "Lange", "Schmitt", "Werner", "Schmitz", "Krause", "Meier", "Lehmann", "Schmid", "Schulze", "Maier", "Köhler", "Herrmann", "König", "Walter", "Mayer", "Huber"],
+                cities: ["Berlin", "Hamburg", "München", "Köln", "Frankfurt", "Stuttgart", "Düsseldorf", "Leipzig", "Dortmund", "Essen", "Bremen", "Dresden", "Hannover", "Nürnberg", "Duisburg", "Bochum", "Wuppertal", "Bielefeld", "Bonn", "Münster", "Karlsruhe", "Mannheim", "Augsburg", "Wiesbaden", "Mönchengladbach"],
+                streets: ["Hauptstraße", "Bahnhofstraße", "Schulstraße", "Gartenstraße", "Dorfstraße", "Bergstraße", "Lindenstraße", "Kirchstraße", "Ringstraße", "Waldstraße", "Feldstraße", "Wiesenstraße", "Schillerstraße", "Goethestraße", "Mozartstraße", "Jahnstraße", "Birkenweg", "Ahornweg", "Eichenweg", "Buchenweg"]
             },
             us: {
-                firstNamesMale: ["James", "John", "Robert", "Michael", "William", "David", "Richard", "Joseph", "Thomas"],
-                firstNamesFemale: ["Mary", "Patricia", "Jennifer", "Linda", "Elizabeth", "Barbara", "Susan", "Jessica"],
-                lastNames: ["Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller", "Davis", "Rodriguez"],
-                cities: ["New York", "Los Angeles", "Chicago", "Houston", "Phoenix", "Philadelphia", "San Antonio"],
-                streets: ["Main St", "Broadway", "Maple Ave", "Oak St", "Washington St", "Park Ave"]
+                firstNamesMale: ["James", "John", "Robert", "Michael", "William", "David", "Richard", "Joseph", "Thomas", "Charles", "Christopher", "Daniel", "Matthew", "Anthony", "Mark", "Donald", "Steven", "Paul", "Andrew", "Joshua", "Kenneth", "Kevin", "Brian", "George", "Edward", "Ronald", "Timothy", "Jason", "Jeffrey", "Ryan"],
+                firstNamesFemale: ["Mary", "Patricia", "Jennifer", "Linda", "Elizabeth", "Barbara", "Susan", "Jessica", "Sarah", "Karen", "Nancy", "Lisa", "Betty", "Margaret", "Sandra", "Ashley", "Kimberly", "Emily", "Donna", "Michelle", "Dorothy", "Carol", "Amanda", "Melissa", "Deborah", "Stephanie", "Rebecca", "Sharon", "Laura", "Cynthia"],
+                lastNames: ["Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller", "Davis", "Rodriguez", "Martinez", "Hernandez", "Lopez", "Gonzalez", "Wilson", "Anderson", "Thomas", "Taylor", "Moore", "Jackson", "Martin", "Lee", "Perez", "Thompson", "White", "Harris", "Sanchez", "Clark", "Ramirez", "Lewis", "Robinson"],
+                cities: ["New York", "Los Angeles", "Chicago", "Houston", "Phoenix", "Philadelphia", "San Antonio", "San Diego", "Dallas", "San Jose", "Austin", "Jacksonville", "Fort Worth", "Columbus", "Charlotte", "San Francisco", "Indianapolis", "Seattle", "Denver", "Washington", "Boston", "El Paso", "Nashville", "Detroit", "Oklahoma City"],
+                streets: ["Main St", "Broadway", "Maple Ave", "Oak St", "Washington St", "Park Ave", "Elm St", "Cedar St", "Pine St", "Lakeview Dr", "Highland Ave", "Sunset Blvd", "River Rd", "Forest Ln", "Hillside Dr", "Church St", "2nd St", "4th St", "6th Ave", "8th St"]
             },
             gb: {
-                firstNamesMale: ["Oliver", "George", "Harry", "Jack"],
-                firstNamesFemale: ["Olivia", "Amelia", "Isla", "Ava"],
-                lastNames: ["Smith", "Jones", "Taylor", "Brown"],
-                cities: ["London", "Manchester", "Birmingham", "Leeds"],
-                streets: ["High Street", "Station Road", "London Road"]
+                firstNamesMale: ["Oliver", "George", "Harry", "Jack", "Jacob", "Noah", "Charlie", "Muhammad", "Thomas", "Oscar", "William", "James", "Henry", "Leo", "Alfie", "Joshua", "Freddie", "Archie", "Ethan", "Isaac", "Alexander", "Joseph", "Edward", "Samuel", "Max", "Daniel", "Arthur", "Lucas", "Mohammed", "Logan"],
+                firstNamesFemale: ["Olivia", "Amelia", "Isla", "Ava", "Emily", "Isabella", "Mia", "Poppy", "Ella", "Lily", "Sophia", "Grace", "Sophie", "Freya", "Alice", "Florence", "Charlotte", "Daisy", "Sienna", "Phoebe", "Evie", "Ruby", "Millie", "Evelyn", "Ivy", "Harper", "Matilda", "Rosie", "Elsie", "Sofia"],
+                lastNames: ["Smith", "Jones", "Taylor", "Brown", "Williams", "Wilson", "Johnson", "Davies", "Robinson", "Wright", "Thompson", "Evans", "Walker", "White", "Roberts", "Green", "Hall", "Wood", "Harris", "Clarke", "Patel", "Jackson", "Khan", "Lewis", "Hughes", "Edwards", "Turner", "Martin", "Ward", "Cooper"],
+                cities: ["London", "Manchester", "Birmingham", "Leeds", "Glasgow", "Southampton", "Liverpool", "Newcastle", "Nottingham", "Sheffield", "Bristol", "Belfast", "Leicester", "Edinburgh", "Cardiff", "Coventry", "Bradford", "Hull", "Stoke-on-Trent", "Wolverhampton"],
+                streets: ["High Street", "Station Road", "London Road", "Church Street", "Main Street", "Park Road", "Victoria Road", "Queens Road", "New Road", "Manor Road", "Church Lane", "Mill Lane", "The Avenue", "West Street", "North Street", "School Lane", "Springfield Road", "York Road", "King Street", "George Street"]
             },
             fr: {
-                firstNamesMale: ["Gabriel", "Leo", "Raphael", "Arthur"],
-                firstNamesFemale: ["Jade", "Louise", "Emma", "Alice"],
-                lastNames: ["Martin", "Bernard", "Thomas", "Petit"],
-                cities: ["Paris", "Marseille", "Lyon", "Toulouse"],
-                streets: ["Rue de la Paix", "Avenue des Champs-Élysées"]
+                firstNamesMale: ["Gabriel", "Leo", "Raphael", "Arthur", "Louis", "Lucas", "Adam", "Jules", "Hugo", "Maël", "Liam", "Noah", "Paul", "Ethan", "Tiago", "Sacha", "Gabin", "Nathan", "Mohamed", "Aaron"],
+                firstNamesFemale: ["Jade", "Louise", "Emma", "Alice", "Ambre", "Lina", "Rose", "Chloé", "Mia", "Léa", "Julia", "Mila", "Inès", "Anna", "Elena", "Romane", "Zoé", "Agathe", "Juliette", "Léna"],
+                lastNames: ["Martin", "Bernard", "Thomas", "Petit", "Robert", "Richard", "Durand", "Dubois", "Moreau", "Laurent", "Simon", "Michel", "Lefebvre", "Leroy", "Roux", "David", "Bertrand", "Morel", "Fournier", "Girard"],
+                cities: ["Paris", "Marseille", "Lyon", "Toulouse", "Nice", "Nantes", "Strasbourg", "Montpellier", "Bordeaux", "Lille", "Rennes", "Reims", "Le Havre", "Saint-Étienne", "Toulon"],
+                streets: ["Rue de la Paix", "Avenue des Champs-Élysées", "Rue de la République", "Grande Rue", "Rue du Moulin", "Place de la Mairie", "Rue du Château", "Rue des Écoles", "Rue de l'Église", "Rue Pasteur", "Rue Victor Hugo"]
             },
             jp: {
-                firstNamesMale: ["Haruto", "Riku", "Sora", "Ren"],
-                firstNamesFemale: ["Yui", "Rio", "Hina", "Mei"],
-                lastNames: ["Sato", "Suzuki", "Takahashi", "Tanaka"],
-                cities: ["Tokyo", "Osaka", "Kyoto", "Yokohama"],
-                streets: ["Chuo-dori", "Showa-dori"]
+                firstNamesMale: ["Haruto", "Riku", "Sora", "Ren", "Hiroto", "Yuto", "Sota", "Minato", "Yuma", "Kaito", "Kota", "Tatsuki", "Daiki", "Sho", "Kenta", "Takumi", "Kazuki", "Ryota", "Hayato", "Yuki"],
+                firstNamesFemale: ["Yui", "Rio", "Hina", "Mei", "Sakura", "Rin", "Aoi", "Himari", "Akari", "Yuna", "Mio", "Haruka", "Misaki", "Nanami", "Kanna", "Koharu", "Suzu", "Noa", "Kokona", "Ayaka"],
+                lastNames: ["Sato", "Suzuki", "Takahashi", "Tanaka", "Watanabe", "Ito", "Yamamoto", "Nakamura", "Kobayashi", "Kato", "Yoshida", "Yamada", "Sasaki", "Yamaguchi", "Matsumoto", "Inoue", "Kimura", "Hayashi", "Shimizu", "Yamazaki"],
+                cities: ["Tokyo", "Osaka", "Kyoto", "Yokohama", "Nagoya", "Sapporo", "Fukuoka", "Kobe", "Kawasaki", "Saitama", "Hiroshima", "Sendai", "Chiba", "Kitakyushu", "Sakai"],
+                streets: ["Chuo-dori", "Showa-dori", "Meiji-dori", "Yasukuni-dori", "Aoyama-dori", "Omotesando", "Takeshita-dori", "Kokusai-dori", "Heiwa-dori"]
             }
         };
 
@@ -539,12 +511,8 @@
             const iv = window.crypto.getRandomValues(new Uint8Array(12));
             const content = enc.encode(JSON.stringify(data));
             const encrypted = await window.crypto.subtle.encrypt({name: "AES-GCM", iv: iv}, key, content);
-            
-            // Combine: salt + iv + ciphertext
             const buffer = new Uint8Array(salt.byteLength + iv.byteLength + encrypted.byteLength);
-            buffer.set(salt, 0);
-            buffer.set(iv, salt.byteLength);
-            buffer.set(new Uint8Array(encrypted), salt.byteLength + iv.byteLength);
+            buffer.set(salt, 0); buffer.set(iv, salt.byteLength); buffer.set(new Uint8Array(encrypted), salt.byteLength + iv.byteLength);
             return btoa(String.fromCharCode(...buffer));
         }
 
@@ -552,101 +520,65 @@
             try {
                 const enc = new TextEncoder();
                 const combined = new Uint8Array(atob(base64Data).split("").map(c => c.charCodeAt(0)));
-                const salt = combined.slice(0, 16);
-                const iv = combined.slice(16, 28);
-                const data = combined.slice(28);
-                
+                const salt = combined.slice(0, 16); const iv = combined.slice(16, 28); const data = combined.slice(28);
                 const keyMaterial = await window.crypto.subtle.importKey("raw", enc.encode(password), {name: "PBKDF2"}, false, ["deriveKey"]);
                 const key = await window.crypto.subtle.deriveKey({name: "PBKDF2", salt: salt, iterations: 100000, hash: "SHA-256"}, keyMaterial, {name: "AES-GCM", length: 256}, false, ["decrypt"]);
-                
                 const decrypted = await window.crypto.subtle.decrypt({name: "AES-GCM", iv: iv}, key, data);
                 return JSON.parse(new TextDecoder().decode(decrypted));
-            } catch (e) {
-                throw new Error("Falsches Passwort oder beschädigte Datei");
-            }
+            } catch (e) { throw new Error("Falsches Passwort oder beschädigte Datei"); }
         }
 
         // --- Generators ---
         function generateCC() {
-            // Visa starts with 4
             let number = "4";
             for(let i=0; i<14; i++) number += Math.floor(Math.random()*10);
-            
-            // Luhn Algo for Checksum
-            let sum = 0;
-            let shouldDouble = true; // start from rightmost digit (which is check digit, but here we calculate it)
-            // Actually simpler: generate 15 digits, calc check digit
-            // Standard implementation:
-            let digits = number.split('').map(Number);
+            let sum = 0; let shouldDouble = true; let digits = number.split('').map(Number);
             for(let i=digits.length-1; i>=0; i--) {
                 let d = digits[i];
-                if(shouldDouble) {
-                    d *= 2;
-                    if(d > 9) d -= 9;
-                }
-                sum += d;
-                shouldDouble = !shouldDouble;
+                if(shouldDouble) { d *= 2; if(d > 9) d -= 9; }
+                sum += d; shouldDouble = !shouldDouble;
             }
             const checkDigit = (10 - (sum % 10)) % 10;
             return number + checkDigit;
         }
-        
         function formatCC(num) { return num.match(/.{1,4}/g).join(' '); }
-
         function generateIBAN(country) {
             const prefix = country.toUpperCase();
-            const bankCode = Math.floor(Math.random() * 89999999) + 10000000;
-            const account = Math.floor(Math.random() * 8999999999) + 1000000000;
-            // Simple fake IBAN (checksum not calculated perfectly for brevity, visual purpose mainly)
             return `${prefix}89 ${Math.floor(Math.random()*9999)} ${Math.floor(Math.random()*9999)} ${Math.floor(Math.random()*9999)} ${Math.floor(Math.random()*9999)}`;
         }
 
         const MailService = {
             baseUrl: 'https://api.mail.tm',
-            async getDomain() {
-                const res = await fetch(`${this.baseUrl}/domains`);
-                const data = await res.json();
-                return data['hydra:member'][0].domain;
-            },
+            async getDomain() { const res = await fetch(`${this.baseUrl}/domains`); const data = await res.json(); return data['hydra:member'][0].domain; },
             async createAccount(address, password) {
-                const res = await fetch(`${this.baseUrl}/accounts`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ address, password })
-                });
+                const res = await fetch(`${this.baseUrl}/accounts`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ address, password }) });
                 return res.ok;
             },
             async getToken(address, password) {
-                const res = await fetch(`${this.baseUrl}/token`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ address, password })
-                });
-                const data = await res.json();
-                if(!data.token) throw new Error("Kein Token erhalten");
-                return data.token;
+                const res = await fetch(`${this.baseUrl}/token`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ address, password }) });
+                const data = await res.json(); if(!data.token) throw new Error("Kein Token"); return data.token;
             },
             async getMessages(token) {
-                const res = await fetch(`${this.baseUrl}/messages?page=1`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                const data = await res.json();
-                return data['hydra:member'];
+                const res = await fetch(`${this.baseUrl}/messages?page=1`, { headers: { 'Authorization': `Bearer ${token}` } });
+                const data = await res.json(); return data['hydra:member'];
             },
             async getMessage(token, id) {
-                 const res = await fetch(`${this.baseUrl}/messages/${id}`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
+                 const res = await fetch(`${this.baseUrl}/messages/${id}`, { headers: { 'Authorization': `Bearer ${token}` } });
                 return await res.json();
             }
         };
 
         function getRandom(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 
+        function toggleCustomAge() {
+            const val = document.getElementById('ageRange').value;
+            const input = document.getElementById('customAge');
+            input.style.display = val === 'manual' ? 'block' : 'none';
+        }
+
         async function generateIdentity() {
             if (pollInterval) clearInterval(pollInterval);
-            pollInterval = null;
-            mailToken = null;
+            pollInterval = null; mailToken = null;
 
             const country = document.getElementById('country').value;
             const genderSelect = document.getElementById('gender').value;
@@ -662,16 +594,31 @@
             const houseNum = Math.floor(Math.random() * 150) + 1;
             const zip = Math.floor(10000 + Math.random() * 90000);
             
-            const [minAge, maxAge] = ageRange.split('-').map(Number);
-            const age = Math.floor(Math.random() * (maxAge - minAge + 1)) + minAge;
+            // Age Logic
+            let age;
+            if (ageRange === 'manual') {
+                const inputVal = parseInt(document.getElementById('customAge').value);
+                age = (inputVal >= 14 && inputVal <= 80) ? inputVal : 18; // Default fallback
+            } else {
+                const [minAge, maxAge] = ageRange.split('-').map(Number);
+                age = Math.floor(Math.random() * (maxAge - minAge + 1)) + minAge;
+            }
+            
             const year = new Date().getFullYear() - age;
             const birthDate = `${Math.floor(Math.random()*28)+1}.${Math.floor(Math.random()*12)+1}.${year}`;
 
             const cleanName = firstName.toLowerCase() + lastName.toLowerCase();
-            const username = `${cleanName}${year % 100}`;
-            const password = generatePassword(); 
+            let username = `${cleanName}${year % 100}`;
             
-            // Financials
+            // DUPLICATE CHECK
+            let attempt = 0;
+            const originalUser = username;
+            while (savedIdentities.some(id => id.username === username) && attempt < 50) {
+                username = `${originalUser}${Math.floor(Math.random()*999)}`;
+                attempt++;
+            }
+
+            const password = generatePassword(); 
             const ccNum = generateCC();
             const iban = generateIBAN(country);
 
@@ -702,7 +649,6 @@
                     
                     document.getElementById('email').textContent = emailAddress;
                     document.getElementById('email').classList.remove('loading');
-                    
                     document.getElementById('inboxSection').style.display = 'block';
                     startPolling();
                 } else {
@@ -724,26 +670,20 @@
         function updateUI(id) {
             document.getElementById('identityCard').style.display = 'block';
             document.getElementById('displayFlag').textContent = { de: '🇩🇪', us: '🇺🇸', gb: '🇬🇧', fr: '🇫🇷', jp: '🇯🇵' }[id.country] || '🌍';
-            
-            // DiceBear Avatar
             const avatarUrl = `https://api.dicebear.com/7.x/avataaars/svg?seed=${id.username}&gender=${id.gender}`;
             document.getElementById('avatar').innerHTML = `<img src="${avatarUrl}" alt="Avatar">`;
-            
             document.getElementById('fullName').textContent = `${id.firstName} ${id.lastName}`;
             document.getElementById('birthDate').textContent = `${id.birthDate} (${id.age} Jahre)`;
             document.getElementById('address').textContent = id.address;
             document.getElementById('email').textContent = id.email;
             document.getElementById('username').textContent = id.username;
             document.getElementById('password').textContent = id.password;
-            
-            // Financial UI
             document.getElementById('ccNumber').textContent = formatCC(id.ccNumber || '0000000000000000');
             document.getElementById('ccName').textContent = `${id.firstName} ${id.lastName}`.toUpperCase();
             document.getElementById('ccExp').textContent = id.ccExp || '12/99';
             document.getElementById('iban').textContent = id.iban || '-';
         }
 
-        // --- Inbox Functions ---
         function startPolling() {
             if (pollInterval) clearInterval(pollInterval);
             checkMail();
@@ -755,36 +695,22 @@
             try {
                 const messages = await MailService.getMessages(mailToken);
                 renderInbox(messages);
-            } catch (e) {
-                console.log("Polling error", e);
-            }
+            } catch (e) { console.log("Polling error", e); }
         }
 
         async function sendTestMail() {
             const list = document.getElementById('inboxList');
             const fakeMsg = document.createElement('div');
             fakeMsg.className = 'email-item unread';
-            fakeMsg.innerHTML = `
-                <div class="email-from">Ghost System</div>
-                <div class="email-subject">✅ Dein Sicherheitscode: 4829</div>
-                <div class="email-time">Jetzt</div>
-                <div class="otp-badge">4829</div>
-            `;
+            fakeMsg.innerHTML = `<div class="email-from">Ghost System</div><div class="email-subject">✅ Dein Sicherheitscode: 4829</div><div class="email-time">Jetzt</div><div class="otp-badge">4829</div>`;
             fakeMsg.onclick = () => alert("Dies ist eine Test-Bestätigung.\nCode gefunden: 4829");
-            
-            if(list.children[0] && list.children[0].textContent.includes("Warte auf")) {
-                list.innerHTML = '';
-            }
+            if(list.children[0] && list.children[0].textContent.includes("Warte auf")) list.innerHTML = '';
             list.insertBefore(fakeMsg, list.firstChild);
         }
 
         function extractOTP(text) {
-            // Regex to find 4-8 digit codes, possibly with spaces or dashes
-            // Focus on common patterns like "Code: 1234", "verification code is 123456"
             const codeMatch = text.match(/(?:code|pin|verification|verifizierung|nummer)[:\s]+([0-9]{4,8})/i);
             if (codeMatch) return codeMatch[1];
-            
-            // Fallback: just any 4-6 digit sequence that is standalone
             const numberMatch = text.match(/\b\d{4,8}\b/);
             return numberMatch ? numberMatch[0] : null;
         }
@@ -792,30 +718,16 @@
         function renderInbox(messages) {
             const list = document.getElementById('inboxList');
             const hasTest = list.innerHTML.includes("Ghost System");
-            
-            if (messages.length === 0 && !hasTest) {
-                list.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--text-dim);">Keine Nachrichten. Warte auf Empfang...</div>';
-                return;
-            }
-            
+            if (messages.length === 0 && !hasTest) { list.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--text-dim);">Keine Nachrichten. Warte auf Empfang...</div>'; return; }
             if (messages.length > 0) {
-                 list.innerHTML = ''; // Re-render all to update status
+                 list.innerHTML = ''; 
                  messages.forEach(msg => {
                     const otp = extractOTP(msg.intro || msg.subject || "");
                     const div = document.createElement('div');
                     div.className = `email-item ${!msg.seen ? 'unread' : ''}`;
                     div.onclick = () => openEmail(msg.id);
-                    
-                    let html = `
-                        <div class="email-from">${msg.from.name || msg.from.address}</div>
-                        <div class="email-subject">${msg.subject || '(Kein Betreff)'}</div>
-                        <div class="email-time">${new Date(msg.createdAt).toLocaleTimeString()}</div>
-                    `;
-                    
-                    if (otp) {
-                        html += `<div class="otp-badge" title="Automatisch erkannter Code">${otp}</div>`;
-                    }
-                    
+                    let html = `<div class="email-from">${msg.from.name || msg.from.address}</div><div class="email-subject">${msg.subject || '(Kein Betreff)'}</div><div class="email-time">${new Date(msg.createdAt).toLocaleTimeString()}</div>`;
+                    if (otp) html += `<div class="otp-badge" title="Automatisch erkannter Code">${otp}</div>`;
                     div.innerHTML = html;
                     list.appendChild(div);
                 });
@@ -825,265 +737,92 @@
         async function openEmail(id) {
             const list = document.getElementById('inboxList');
             const view = document.getElementById('emailView');
-            list.style.display = 'none';
-            view.style.display = 'block';
-            view.innerHTML = '<div class="loading">Lade Nachricht...</div>';
-            
+            list.style.display = 'none'; view.style.display = 'block'; view.innerHTML = '<div class="loading">Lade Nachricht...</div>';
             try {
                 const msg = await MailService.getMessage(mailToken, id);
-                
                 view.innerHTML = ''; 
                 view.appendChild(document.createElement('button')).className = 'btn btn-secondary';
                 view.lastChild.textContent = '⬅️ Zurück';
                 view.lastChild.onclick = closeEmail;
                 view.lastChild.style.marginBottom = '15px';
-                
                 const header = document.createElement('div');
                 header.className = 'email-view-header';
                 header.innerHTML = `<h3>${msg.subject}</h3><div style="color:var(--text-dim)">Von: ${msg.from.address}</div>`;
                 view.appendChild(header);
-                
-                // Highlight OTP in Body if found
                 const otp = extractOTP(msg.text || "");
                 let bodyContent = msg.text || "Nur HTML verfügbar.";
-                
-                if (otp) {
-                    bodyContent = bodyContent.replace(otp, `<span style="background:var(--primary); color:black; padding:2px 5px; font-weight:bold; border-radius:3px;">${otp}</span>`);
-                }
-                
+                if (otp) bodyContent = bodyContent.replace(otp, `<span style="background:var(--primary); color:black; padding:2px 5px; font-weight:bold; border-radius:3px;">${otp}</span>`);
                 const body = document.createElement('div');
                 body.className = 'email-body';
-                body.innerHTML = bodyContent; // Using innerHTML to render highlights
+                body.innerHTML = bodyContent;
                 view.appendChild(body);
-            } catch (e) {
-                view.innerHTML = 'Fehler beim Laden.';
-            }
+            } catch (e) { view.innerHTML = 'Fehler beim Laden.'; }
         }
 
-        function closeEmail() {
-            document.getElementById('inboxList').style.display = 'block';
-            document.getElementById('emailView').style.display = 'none';
-        }
-
-        function copyText(element) {
-            const text = element.querySelector('span').textContent;
-            navigator.clipboard.writeText(text);
-            showToast();
-        }
-        
-        function copyCC() {
-            const cc = document.getElementById('ccNumber').textContent.replace(/\s/g, '');
-            navigator.clipboard.writeText(cc);
-            showToast();
-        }
-        
-        function showToast() {
-            const toast = document.getElementById('toast');
-            toast.style.opacity = '1';
-            setTimeout(() => toast.style.opacity = '0', 2000);
-        }
-
+        function closeEmail() { document.getElementById('inboxList').style.display = 'block'; document.getElementById('emailView').style.display = 'none'; }
+        function copyText(element) { navigator.clipboard.writeText(element.querySelector('span').textContent); showToast(); }
+        function copyCC() { navigator.clipboard.writeText(document.getElementById('ccNumber').textContent.replace(/\s/g, '')); showToast(); }
+        function showToast() { const toast = document.getElementById('toast'); toast.style.opacity = '1'; setTimeout(() => toast.style.opacity = '0', 2000); }
         function saveCurrentIdentity() {
             if (!currentIdentity) return;
             const exists = savedIdentities.some(id => id.id === currentIdentity.id);
             if (exists) { 
                 const index = savedIdentities.findIndex(id => id.id === currentIdentity.id);
-                if (mailToken) currentIdentity.mailToken = mailToken;
-                savedIdentities[index] = currentIdentity;
-                alert('✅ Identität aktualisiert!');
+                if (mailToken) currentIdentity.mailToken = mailToken; savedIdentities[index] = currentIdentity; alert('✅ Identität aktualisiert!');
             } else {
-                if (mailToken) currentIdentity.mailToken = mailToken;
-                savedIdentities.unshift(currentIdentity);
-                alert('✅ Identität lokal gespeichert!');
+                if (mailToken) currentIdentity.mailToken = mailToken; savedIdentities.unshift(currentIdentity); alert('✅ Identität lokal gespeichert!');
             }
-            localStorage.setItem('ghost_identities', JSON.stringify(savedIdentities));
-            renderSavedList();
+            localStorage.setItem('ghost_identities', JSON.stringify(savedIdentities)); renderSavedList();
         }
-
         function renderSavedList() {
-            const list = document.getElementById('savedList');
-            document.getElementById('savedCount').textContent = savedIdentities.length;
-            list.innerHTML = '';
-            
-            if (savedIdentities.length === 0) { 
-                list.innerHTML = '<div style="padding:20px; text-align:center; color:var(--text-dim)">Keine Daten.</div>'; 
-                return; 
-            }
-
+            const list = document.getElementById('savedList'); document.getElementById('savedCount').textContent = savedIdentities.length; list.innerHTML = '';
+            if (savedIdentities.length === 0) { list.innerHTML = '<div style="padding:20px; text-align:center; color:var(--text-dim)">Keine Daten.</div>'; return; }
             savedIdentities.forEach((id, index) => {
-                const item = document.createElement('div');
-                item.className = 'saved-item';
+                const item = document.createElement('div'); item.className = 'saved-item';
                 const flag = { de: '🇩🇪', us: '🇺🇸', gb: '🇬🇧', fr: '🇫🇷', jp: '🇯🇵' }[id.country] || '🌍';
-                
-                item.innerHTML = `
-                    <div class="saved-info">
-                        <strong>${flag} ${id.firstName} ${id.lastName}</strong>
-                        <div class="saved-meta">
-                            <span>📧 ${id.email}</span>
-                            <span>💳 VISA</span>
-                        </div>
-                    </div>
-                    <div style="display: flex; gap: 10px;">
-                        <button class="btn btn-primary" style="padding: 10px 15px;" onclick="loadIdentity(${index})">
-                            Login 🚀
-                        </button>
-                        <button class="btn btn-danger" style="padding: 10px 15px;" onclick="deleteIdentity(${index})">
-                            ❌
-                        </button>
-                    </div>
-                `;
+                item.innerHTML = `<div class="saved-info"><strong>${flag} ${id.firstName} ${id.lastName}</strong><div class="saved-meta"><span>📧 ${id.email}</span><span>💳 VISA</span></div></div><div style="display: flex; gap: 10px;"><button class="btn btn-primary" style="padding: 10px 15px;" onclick="loadIdentity(${index})">Login 🚀</button><button class="btn btn-danger" style="padding: 10px 15px;" onclick="deleteIdentity(${index})">❌</button></div>`;
                 list.appendChild(item);
             });
         }
-
         async function loadIdentity(index) {
-            if (pollInterval) clearInterval(pollInterval);
-            pollInterval = null;
-
-            const id = savedIdentities[index];
-            currentIdentity = id;
-            updateUI(id);
-            
-            document.getElementById('email').classList.add('loading');
-            document.getElementById('email').textContent = "Verbinde mit Postfach...";
-            
+            if (pollInterval) clearInterval(pollInterval); pollInterval = null;
+            const id = savedIdentities[index]; currentIdentity = id; updateUI(id);
+            document.getElementById('email').classList.add('loading'); document.getElementById('email').textContent = "Verbinde mit Postfach...";
             try {
-                if (id.mailToken) {
-                    mailToken = id.mailToken;
-                    await MailService.getMessages(mailToken);
-                } else {
-                    const token = await MailService.getToken(id.email, id.password);
-                    mailToken = token;
-                    id.mailToken = token;
-                    saveCurrentIdentity(); 
-                }
-                
-                document.getElementById('email').textContent = id.email;
-                document.getElementById('email').classList.remove('loading');
-                document.getElementById('inboxSection').style.display = 'block';
-                startPolling();
-                
-            } catch (e) {
-                console.error("Login failed", e);
-                document.getElementById('email').textContent = id.email + " (Nicht erreichbar - evtl. gelöscht)";
-                mailToken = null;
-                document.getElementById('inboxSection').style.display = 'none';
-            }
-            
+                if (id.mailToken) { mailToken = id.mailToken; await MailService.getMessages(mailToken); }
+                else { const token = await MailService.getToken(id.email, id.password); mailToken = token; id.mailToken = token; saveCurrentIdentity(); }
+                document.getElementById('email').textContent = id.email; document.getElementById('email').classList.remove('loading'); document.getElementById('inboxSection').style.display = 'block'; startPolling();
+            } catch (e) { console.error("Login failed", e); document.getElementById('email').textContent = id.email + " (Nicht erreichbar - evtl. gelöscht)"; mailToken = null; document.getElementById('inboxSection').style.display = 'none'; }
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
-
-        function deleteIdentity(index) {
-            if (confirm('Wirklich löschen?')) {
-                savedIdentities.splice(index, 1);
-                localStorage.setItem('ghost_identities', JSON.stringify(savedIdentities));
-                renderSavedList();
-                if (savedIdentities.length === 0) document.getElementById('identityCard').style.display = 'none';
-            }
-        }
-
-        function clearAllData() {
-            if (confirm('⚠️ ACHTUNG: Das löscht ALLE gespeicherten Identitäten vom Browser!')) {
-                savedIdentities = []; 
-                currentIdentity = null; 
-                mailToken = null;
-                localStorage.setItem('ghost_identities', '[]');
-                renderSavedList();
-                document.getElementById('identityCard').style.display = 'none';
-            }
-        }
-        
-        // --- Export / Import Logic ---
-        function showExportModal() {
-            if (savedIdentities.length === 0) { alert('Keine Daten!'); return; }
-            document.getElementById('exportModal').style.display = 'flex';
-        }
-        
+        function deleteIdentity(index) { if (confirm('Wirklich löschen?')) { savedIdentities.splice(index, 1); localStorage.setItem('ghost_identities', JSON.stringify(savedIdentities)); renderSavedList(); if (savedIdentities.length === 0) document.getElementById('identityCard').style.display = 'none'; } }
+        function clearAllData() { if (confirm('⚠️ ACHTUNG: Das löscht ALLE gespeicherten Identitäten vom Browser!')) { savedIdentities = []; currentIdentity = null; mailToken = null; localStorage.setItem('ghost_identities', '[]'); renderSavedList(); document.getElementById('identityCard').style.display = 'none'; } }
+        function showExportModal() { if (savedIdentities.length === 0) { alert('Keine Daten!'); return; } document.getElementById('exportModal').style.display = 'flex'; }
         async function performExport() {
-            const password = document.getElementById('exportPass').value;
-            const backup = { version: "2.0", date: new Date().toISOString(), identities: savedIdentities };
-            
-            let dataStr;
-            let filename = `ghost-backup-${new Date().toISOString().slice(0,10)}`;
-            
+            const password = document.getElementById('exportPass').value; const backup = { version: "2.1", date: new Date().toISOString(), identities: savedIdentities };
+            let dataStr; let filename = `ghost-backup-${new Date().toISOString().slice(0,10)}`;
             if (password) {
-                try {
-                    const encrypted = await encryptData(backup, password);
-                    dataStr = JSON.stringify({ encrypted: true, content: encrypted });
-                    filename += "-SECURE";
-                } catch (e) {
-                    alert("Verschlüsselungs-Fehler: " + e.message);
-                    return;
-                }
-            } else {
-                dataStr = JSON.stringify(backup, null, 2);
-            }
-            
-            const blob = new Blob([dataStr], { type: "application/json" });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = filename + ".json";
-            a.click();
-            URL.revokeObjectURL(url);
-            
-            closeModal('exportModal');
+                try { const encrypted = await encryptData(backup, password); dataStr = JSON.stringify({ encrypted: true, content: encrypted }); filename += "-SECURE"; }
+                catch (e) { alert("Verschlüsselungs-Fehler: " + e.message); return; }
+            } else { dataStr = JSON.stringify(backup, null, 2); }
+            const blob = new Blob([dataStr], { type: "application/json" }); const url = URL.createObjectURL(blob);
+            const a = document.createElement('a'); a.href = url; a.download = filename + ".json"; a.click(); URL.revokeObjectURL(url); closeModal('exportModal');
         }
-
         function importData(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
+            const file = e.target.files[0]; if (!file) return; const reader = new FileReader();
             reader.onload = (ev) => {
-                try {
-                    const json = JSON.parse(ev.target.result);
-                    
-                    if (json.encrypted) {
-                        pendingImportData = json.content;
-                        document.getElementById('importModal').style.display = 'flex';
-                    } else {
-                        finishImport(json);
-                    }
-                } catch (err) { alert("❌ Ungültige Datei!"); }
-            };
-            reader.readAsText(file);
-            e.target.value = '';
+                try { const json = JSON.parse(ev.target.result); if (json.encrypted) { pendingImportData = json.content; document.getElementById('importModal').style.display = 'flex'; } else { finishImport(json); } }
+                catch (err) { alert("❌ Ungültige Datei!"); }
+            }; reader.readAsText(file); e.target.value = '';
         }
-        
-        async function performImport() {
-            const password = document.getElementById('importPass').value;
-            try {
-                const data = await decryptData(pendingImportData, password);
-                finishImport(data);
-                closeModal('importModal');
-            } catch (e) {
-                alert("❌ Falsches Passwort!");
-            }
-        }
-        
+        async function performImport() { const password = document.getElementById('importPass').value; try { const data = await decryptData(pendingImportData, password); finishImport(data); closeModal('importModal'); } catch (e) { alert("❌ Falsches Passwort!"); } }
         function finishImport(json) {
-            let newIdentities = [];
-            if (Array.isArray(json)) newIdentities = json;
-            else if (json.identities) newIdentities = json.identities;
-            
-            const existingIds = new Set(savedIdentities.map(i => i.id));
-            let addedCount = 0;
-            newIdentities.forEach(id => {
-                if (!existingIds.has(id.id)) { savedIdentities.push(id); addedCount++; }
-            });
-
-            localStorage.setItem('ghost_identities', JSON.stringify(savedIdentities));
-            renderSavedList();
-            alert(`✅ Import erfolgreich! ${addedCount} neue Identitäten.`);
+            let newIdentities = []; if (Array.isArray(json)) newIdentities = json; else if (json.identities) newIdentities = json.identities;
+            const existingIds = new Set(savedIdentities.map(i => i.id)); let addedCount = 0;
+            newIdentities.forEach(id => { if (!existingIds.has(id.id)) { savedIdentities.push(id); addedCount++; } });
+            localStorage.setItem('ghost_identities', JSON.stringify(savedIdentities)); renderSavedList(); alert(`✅ Import erfolgreich! ${addedCount} neue Identitäten.`);
         }
-
-        function closeModal(id) {
-            document.getElementById(id).style.display = 'none';
-            pendingImportData = null;
-            document.getElementById('exportPass').value = '';
-            document.getElementById('importPass').value = '';
-        }
-
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; pendingImportData = null; document.getElementById('exportPass').value = ''; document.getElementById('importPass').value = ''; }
         window.addEventListener('load', renderSavedList);
     </script>
 </body>
