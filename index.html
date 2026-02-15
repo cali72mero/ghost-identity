@@ -15,7 +15,6 @@
             --border: #334155;
             --danger: #ef4444;
             --accent: #3b82f6;
-            --mail-bg: #2d3748;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -48,6 +47,7 @@
 
         .subtitle { color: var(--text-dim); font-size: 1.1rem; }
 
+        /* Controls */
         .controls {
             background: var(--bg-panel);
             padding: 20px;
@@ -77,10 +77,15 @@
 
         .btn-primary { background: var(--primary); color: var(--bg-dark); width: 100%; font-size: 1.1rem; }
         .btn-primary:hover { background: var(--primary-glow); box-shadow: 0 0 20px rgba(16, 185, 129, 0.4); }
+        
+        .btn-action { background: var(--accent); color: white; }
+        .btn-action:hover { background: #2563eb; }
+        
         .btn-danger { background: rgba(239, 68, 68, 0.2); color: var(--danger); border: 1px solid var(--danger); }
         .btn-secondary { background: var(--bg-panel); border: 1px solid var(--border); color: var(--text); }
         .btn-refresh { background: var(--accent); color: white; border: none; padding: 5px 10px; font-size: 0.8rem; }
 
+        /* Identity Card */
         .identity-card {
             background: var(--bg-panel);
             border-radius: 20px;
@@ -176,23 +181,48 @@
 
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
 
+        /* Saved Section */
         .saved-section { margin-top: 40px; }
-        .saved-item {
-            background: var(--bg-panel); padding: 15px; border-radius: 10px;
-            border: 1px solid var(--border); margin-bottom: 10px;
-            display: flex; justify-content: space-between; align-items: center;
+        
+        .management-bar {
+            background: var(--bg-panel);
+            padding: 20px;
+            border-radius: 15px;
+            border: 1px solid var(--border);
+            margin-bottom: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: space-between;
+            align-items: center;
         }
+
+        .saved-list { display: grid; gap: 15px; }
+        
+        .saved-item {
+            background: var(--bg-panel); padding: 20px; border-radius: 10px;
+            border: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            transition: transform 0.2s;
+        }
+        .saved-item:hover { transform: translateX(5px); border-color: var(--primary); }
+
+        .saved-info strong { display: block; font-size: 1.1rem; margin-bottom: 5px; color: var(--primary); }
+        .saved-meta { font-size: 0.9rem; color: var(--text-dim); display: flex; gap: 15px; }
 
         .toast {
             position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
             background: var(--primary); color: var(--bg-dark); padding: 10px 20px;
-            border-radius: 25px; font-weight: 600; opacity: 0; pointer-events: none; transition: opacity 0.3s;
+            border-radius: 25px; font-weight: 600; opacity: 0; pointer-events: none; transition: opacity 0.3s; z-index: 1000;
         }
 
         @media (max-width: 768px) {
             .id-body { grid-template-columns: 1fr; text-align: center; }
             .avatar { margin: 0 auto; }
             .info-grid { grid-template-columns: 1fr; text-align: left; }
+            .management-bar { flex-direction: column; align-items: stretch; }
+            .saved-item { flex-direction: column; gap: 15px; align-items: flex-start; }
+            .saved-item > div:last-child { width: 100%; display: flex; justify-content: space-between; }
         }
     </style>
 </head>
@@ -202,10 +232,11 @@
             <h1>🕵️ Ghost Identity</h1>
             <p class="subtitle">Professioneller Fake-Daten Generator & Temp Mail Client</p>
             <div style="margin-top: 15px; font-size: 0.9rem; color: var(--text-dim);">
-                🛡️ 100% Lokal • 📧 Echte E-Mail Empfangen (mail.tm API) • 🚫 Keine Telefonnummern
+                🛡️ 100% Lokal • 📧 Echte E-Mail Empfangen (mail.tm API) • 💾 Backup & Restore
             </div>
         </header>
 
+        <!-- Generator Controls -->
         <div class="controls">
             <div class="control-group">
                 <label>🌍 Land / Region</label>
@@ -240,6 +271,7 @@
             </div>
         </div>
 
+        <!-- Identity Card View -->
         <div id="identityCard" class="identity-card" style="display: none;">
             <div class="id-header">
                 <div style="font-weight: bold; letter-spacing: 2px;">IDENTITÄTS-KARTE</div>
@@ -269,7 +301,6 @@
                             <span class="copy-icon">📋</span>
                         </div>
                     </div>
-                    <!-- Phone Number REMOVED as requested -->
                     <div class="info-item" style="grid-column: span 2;">
                         <div class="info-label">E-Mail (Echter Empfang möglich!)</div>
                         <div class="info-value" onclick="copyText(this)">
@@ -318,6 +349,7 @@
                 </div>
             </div>
 
+            <!-- Save Button -->
             <div style="padding: 20px; background: rgba(0,0,0,0.2); text-align: center; border-top: 1px solid var(--border);">
                 <button class="btn btn-primary" onclick="saveCurrentIdentity()" style="width: auto;">
                     💾 Identität & E-Mail Zugang speichern
@@ -325,17 +357,22 @@
             </div>
         </div>
 
+        <!-- Saved Identities Manager -->
         <div class="saved-section">
-            <div class="saved-header" style="display: flex; justify-content: space-between; margin-bottom: 20px;">
-                <h2>📂 Gespeicherte Identitäten (<span id="savedCount">0</span>)</h2>
-                <div class="action-row" style="display: flex; gap: 10px;">
-                    <button class="btn btn-secondary" onclick="exportData()">📤 Backup</button>
-                    <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">📥 Restore</button>
+            <div class="management-bar">
+                <h2 style="font-size: 1.5rem;">📂 Gespeicherte Identitäten (<span id="savedCount">0</span>)</h2>
+                
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn btn-action" onclick="exportData()">📤 Backup Erstellen (.json)</button>
+                    <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">📥 Backup Laden</button>
                     <input type="file" id="importFile" style="display: none;" onchange="importData(event)" accept=".json">
-                    <button class="btn btn-danger" onclick="clearAllData()">🗑️ Alle Löschen</button>
+                    <button class="btn btn-danger" onclick="clearAllData()">🗑️ Alles Löschen</button>
                 </div>
             </div>
-            <div id="savedList" class="saved-list"></div>
+            
+            <div id="savedList" class="saved-list">
+                <!-- List items injected by JS -->
+            </div>
         </div>
     </div>
 
@@ -389,22 +426,19 @@
         // --- Mail Service ---
         const MailService = {
             baseUrl: 'https://api.mail.tm',
-            
             async getDomain() {
                 const res = await fetch(`${this.baseUrl}/domains`);
                 const data = await res.json();
                 return data['hydra:member'][0].domain;
             },
-
             async createAccount(address, password) {
                 const res = await fetch(`${this.baseUrl}/accounts`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ address, password })
                 });
-                return res.ok; // 201 Created
+                return res.ok;
             },
-
             async getToken(address, password) {
                 const res = await fetch(`${this.baseUrl}/token`, {
                     method: 'POST',
@@ -412,9 +446,9 @@
                     body: JSON.stringify({ address, password })
                 });
                 const data = await res.json();
+                if(!data.token) throw new Error("Kein Token erhalten");
                 return data.token;
             },
-
             async getMessages(token) {
                 const res = await fetch(`${this.baseUrl}/messages`, {
                     headers: { 'Authorization': `Bearer ${token}` }
@@ -422,7 +456,6 @@
                 const data = await res.json();
                 return data['hydra:member'];
             },
-            
             async getMessage(token, id) {
                  const res = await fetch(`${this.baseUrl}/messages/${id}`, {
                     headers: { 'Authorization': `Bearer ${token}` }
@@ -434,6 +467,11 @@
         function getRandom(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 
         async function generateIdentity() {
+            // Stop polling old mail
+            if (pollInterval) clearInterval(pollInterval);
+            pollInterval = null;
+            mailToken = null;
+
             const country = document.getElementById('country').value;
             const genderSelect = document.getElementById('gender').value;
             const ageRange = document.getElementById('ageRange').value;
@@ -441,7 +479,6 @@
             const pool = data[country];
             let gender = genderSelect === 'random' ? (Math.random() > 0.5 ? 'male' : 'female') : genderSelect;
             
-            // Name & Address
             const firstName = gender === 'male' ? getRandom(pool.firstNamesMale) : getRandom(pool.firstNamesFemale);
             const lastName = getRandom(pool.lastNames);
             const city = getRandom(pool.cities);
@@ -449,18 +486,16 @@
             const houseNum = Math.floor(Math.random() * 150) + 1;
             const zip = Math.floor(10000 + Math.random() * 90000);
             
-            // Age
             const [minAge, maxAge] = ageRange.split('-').map(Number);
             const age = Math.floor(Math.random() * (maxAge - minAge + 1)) + minAge;
             const year = new Date().getFullYear() - age;
             const birthDate = `${Math.floor(Math.random()*28)+1}.${Math.floor(Math.random()*12)+1}.${year}`;
 
-            // Digital Identity
             const cleanName = firstName.toLowerCase() + lastName.toLowerCase();
             const username = `${cleanName}${year % 100}`;
-            const password = generatePassword(); // Used for both identity AND mail account
+            const password = generatePassword(); 
 
-            // Update UI Initial State
+            // Initialize Identity
             currentIdentity = {
                 id: Date.now(),
                 firstName, lastName, gender, country,
@@ -476,18 +511,17 @@
             // Setup Email
             try {
                 const domain = await MailService.getDomain();
-                const emailAddress = `${username}${Math.floor(Math.random()*999)}@${domain}`;
+                const emailAddress = `${username}${Math.floor(Math.random()*9999)}@${domain}`;
                 
                 const created = await MailService.createAccount(emailAddress, password);
                 if (created) {
                     mailToken = await MailService.getToken(emailAddress, password);
                     currentIdentity.email = emailAddress;
-                    currentIdentity.mailToken = mailToken; // Save token for session
+                    currentIdentity.mailToken = mailToken; 
                     
                     document.getElementById('email').textContent = emailAddress;
                     document.getElementById('email').classList.remove('loading');
                     
-                    // Show Inbox
                     document.getElementById('inboxSection').style.display = 'block';
                     startPolling();
                 } else {
@@ -508,7 +542,7 @@
 
         function updateUI(id) {
             document.getElementById('identityCard').style.display = 'block';
-            document.getElementById('displayFlag').textContent = { de: '🇩🇪', us: '🇺🇸', gb: '🇬🇧', fr: '🇫🇷', jp: '🇯🇵' }[id.country];
+            document.getElementById('displayFlag').textContent = { de: '🇩🇪', us: '🇺🇸', gb: '🇬🇧', fr: '🇫🇷', jp: '🇯🇵' }[id.country] || '🌍';
             document.getElementById('avatar').textContent = id.gender === 'male' ? '👨' : '👩';
             document.getElementById('fullName').textContent = `${id.firstName} ${id.lastName}`;
             document.getElementById('birthDate').textContent = `${id.birthDate} (${id.age} Jahre)`;
@@ -531,7 +565,7 @@
                 const messages = await MailService.getMessages(mailToken);
                 renderInbox(messages);
             } catch (e) {
-                console.log("Polling error", e);
+                console.log("Polling error (Login expired?)", e);
             }
         }
 
@@ -594,7 +628,7 @@
             document.getElementById('emailView').style.display = 'none';
         }
 
-        // --- Storage & Copy ---
+        // --- Storage & Backup Logic ---
         function copyText(element) {
             const text = element.querySelector('span').textContent;
             navigator.clipboard.writeText(text);
@@ -603,37 +637,55 @@
             setTimeout(() => toast.style.opacity = '0', 2000);
         }
 
-        async function saveCurrentIdentity() {
+        function saveCurrentIdentity() {
             if (!currentIdentity) return;
             const exists = savedIdentities.some(id => id.id === currentIdentity.id);
-            if (exists) { alert('⚠️ Identität bereits gespeichert!'); return; }
-            
-            // Ensure token is fresh if possible, or just save what we have
-            if (mailToken) currentIdentity.mailToken = mailToken;
-
-            savedIdentities.unshift(currentIdentity);
+            if (exists) { 
+                // Update existing
+                const index = savedIdentities.findIndex(id => id.id === currentIdentity.id);
+                if (mailToken) currentIdentity.mailToken = mailToken;
+                savedIdentities[index] = currentIdentity;
+                alert('✅ Identität aktualisiert!');
+            } else {
+                // Save new
+                if (mailToken) currentIdentity.mailToken = mailToken;
+                savedIdentities.unshift(currentIdentity);
+                alert('✅ Identität lokal gespeichert!');
+            }
             localStorage.setItem('ghost_identities', JSON.stringify(savedIdentities));
             renderSavedList();
-            alert('✅ Identität lokal gespeichert!');
         }
 
         function renderSavedList() {
             const list = document.getElementById('savedList');
             document.getElementById('savedCount').textContent = savedIdentities.length;
             list.innerHTML = '';
-            if (savedIdentities.length === 0) { list.innerHTML = '<div style="padding:20px; text-align:center; color:var(--text-dim)">Keine Daten.</div>'; return; }
+            
+            if (savedIdentities.length === 0) { 
+                list.innerHTML = '<div style="padding:20px; text-align:center; color:var(--text-dim)">Keine Daten.</div>'; 
+                return; 
+            }
 
             savedIdentities.forEach((id, index) => {
                 const item = document.createElement('div');
                 item.className = 'saved-item';
+                const flag = { de: '🇩🇪', us: '🇺🇸', gb: '🇬🇧', fr: '🇫🇷', jp: '🇯🇵' }[id.country] || '🌍';
+                
                 item.innerHTML = `
                     <div class="saved-info">
-                        <strong>${id.firstName} ${id.lastName} (${id.country.toUpperCase()})</strong>
-                        <span style="font-size: 0.9rem; color: var(--text-dim);">${id.email}</span>
+                        <strong>${flag} ${id.firstName} ${id.lastName}</strong>
+                        <div class="saved-meta">
+                            <span>📧 ${id.email}</span>
+                            <span>👤 ${id.username}</span>
+                        </div>
                     </div>
                     <div style="display: flex; gap: 10px;">
-                        <button class="btn btn-secondary" style="padding: 8px;" onclick="loadIdentity(${index})">Login 📨</button>
-                        <button class="btn btn-danger" style="padding: 8px;" onclick="deleteIdentity(${index})">🗑️</button>
+                        <button class="btn btn-primary" style="padding: 10px 15px;" onclick="loadIdentity(${index})">
+                            Login & Öffnen 🚀
+                        </button>
+                        <button class="btn btn-danger" style="padding: 10px 15px;" onclick="deleteIdentity(${index})">
+                            ❌
+                        </button>
                     </div>
                 `;
                 list.appendChild(item);
@@ -641,66 +693,133 @@
         }
 
         async function loadIdentity(index) {
+            // Stop current polling
+            if (pollInterval) clearInterval(pollInterval);
+            pollInterval = null;
+
             const id = savedIdentities[index];
             currentIdentity = id;
             updateUI(id);
             
-            // Restore Mail Session
-            if (id.email && id.password) {
-                document.getElementById('email').classList.add('loading');
-                document.getElementById('email').textContent = "Verbinde mit Postfach...";
-                try {
-                    // Try to get token again (re-login)
+            document.getElementById('email').classList.add('loading');
+            document.getElementById('email').textContent = "Verbinde mit Postfach...";
+            
+            // Try to restore session
+            try {
+                // 1. Try saved token first
+                if (id.mailToken) {
+                    mailToken = id.mailToken;
+                    // Test token validity by fetching messages
+                    await MailService.getMessages(mailToken);
+                    console.log("Token still valid");
+                } else {
+                    // 2. Try login with password
+                    console.log("No token, trying password login...");
                     const token = await MailService.getToken(id.email, id.password);
                     mailToken = token;
-                    document.getElementById('email').textContent = id.email;
-                    document.getElementById('email').classList.remove('loading');
-                    document.getElementById('inboxSection').style.display = 'block';
-                    startPolling();
-                } catch (e) {
-                    document.getElementById('email').textContent = id.email + " (Login fehlgeschlagen - evtl. gelöscht)";
-                    mailToken = null;
+                    // Save new token to storage
+                    id.mailToken = token;
+                    saveCurrentIdentity(); 
                 }
+                
+                document.getElementById('email').textContent = id.email;
+                document.getElementById('email').classList.remove('loading');
+                document.getElementById('inboxSection').style.display = 'block';
+                startPolling();
+                
+            } catch (e) {
+                console.error("Login failed", e);
+                document.getElementById('email').textContent = id.email + " (Nicht erreichbar - evtl. gelöscht)";
+                mailToken = null;
+                document.getElementById('inboxSection').style.display = 'none';
             }
+            
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function deleteIdentity(index) {
-            if (confirm('Löschen?')) {
+            if (confirm('Wirklich löschen?')) {
                 savedIdentities.splice(index, 1);
                 localStorage.setItem('ghost_identities', JSON.stringify(savedIdentities));
                 renderSavedList();
+                if (savedIdentities.length === 0) document.getElementById('identityCard').style.display = 'none';
             }
         }
 
         function clearAllData() {
-            if (confirm('ALLES Löschen?')) {
-                savedIdentities = []; currentIdentity = null; mailToken = null;
+            if (confirm('⚠️ ACHTUNG: Das löscht ALLE gespeicherten Identitäten vom Browser!')) {
+                savedIdentities = []; 
+                currentIdentity = null; 
+                mailToken = null;
                 localStorage.setItem('ghost_identities', '[]');
                 renderSavedList();
                 document.getElementById('identityCard').style.display = 'none';
             }
         }
         
-        // Export/Import functionality remains same as previous...
+        // --- Import / Export ---
         function exportData() {
-            const dataStr = JSON.stringify(savedIdentities, null, 2);
+            if (savedIdentities.length === 0) { alert('Keine Daten zum Exportieren!'); return; }
+            
+            // Create backup object with timestamp
+            const backup = {
+                version: "1.0",
+                date: new Date().toISOString(),
+                identities: savedIdentities
+            };
+            
+            const dataStr = JSON.stringify(backup, null, 2);
             const blob = new Blob([dataStr], { type: "application/json" });
             const url = URL.createObjectURL(blob);
+            
             const a = document.createElement('a');
             a.href = url;
-            a.download = `ghost-identities.json`;
+            a.download = `ghost-backup-${new Date().toISOString().slice(0,10)}.json`;
             a.click();
             URL.revokeObjectURL(url);
         }
+
         function importData(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
             const reader = new FileReader();
             reader.onload = (ev) => {
-                savedIdentities = [...JSON.parse(ev.target.result), ...savedIdentities];
-                localStorage.setItem('ghost_identities', JSON.stringify(savedIdentities));
-                renderSavedList();
+                try {
+                    const json = JSON.parse(ev.target.result);
+                    let newIdentities = [];
+                    
+                    // Handle both old format (array) and new format (object)
+                    if (Array.isArray(json)) {
+                        newIdentities = json;
+                    } else if (json.identities && Array.isArray(json.identities)) {
+                        newIdentities = json.identities;
+                    } else {
+                        alert("❌ Ungültiges Backup-Format!");
+                        return;
+                    }
+
+                    // Merge avoiding duplicates (by ID)
+                    const existingIds = new Set(savedIdentities.map(i => i.id));
+                    let addedCount = 0;
+                    
+                    newIdentities.forEach(id => {
+                        if (!existingIds.has(id.id)) {
+                            savedIdentities.push(id);
+                            addedCount++;
+                        }
+                    });
+
+                    localStorage.setItem('ghost_identities', JSON.stringify(savedIdentities));
+                    renderSavedList();
+                    alert(`✅ Backup geladen! ${addedCount} Identitäten hinzugefügt.`);
+                } catch (err) {
+                    alert("❌ Fehler beim Lesen der Datei!");
+                    console.error(err);
+                }
             };
-            reader.readAsText(e.target.files[0]);
+            reader.readAsText(file);
+            e.target.value = ''; // Reset input
         }
 
         window.addEventListener('load', renderSavedList);
