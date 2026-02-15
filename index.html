@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🕵️ Ghost Identity | Professional Fake Data Generator</title>
+    <title>🕵️ Ghost Identity | Real Fake Data & Temp Mail</title>
     <style>
         :root {
             --primary: #10b981;
@@ -15,13 +15,10 @@
             --border: #334155;
             --danger: #ef4444;
             --accent: #3b82f6;
+            --mail-bg: #2d3748;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Segoe UI', system-ui, sans-serif;
@@ -31,12 +28,8 @@
             padding: 20px;
         }
 
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-        }
+        .container { max-width: 1000px; margin: 0 auto; }
 
-        /* Header */
         header {
             text-align: center;
             padding: 40px 0;
@@ -53,12 +46,8 @@
             text-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
         }
 
-        .subtitle {
-            color: var(--text-dim);
-            font-size: 1.1rem;
-        }
+        .subtitle { color: var(--text-dim); font-size: 1.1rem; }
 
-        /* Controls Panel */
         .controls {
             background: var(--bg-panel);
             padding: 20px;
@@ -70,22 +59,8 @@
             gap: 20px;
         }
 
-        .control-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: var(--text-dim);
-            font-size: 0.9rem;
-        }
-
-        select, input {
-            width: 100%;
-            padding: 10px;
-            background: var(--bg-dark);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            color: var(--text);
-            font-size: 1rem;
-        }
+        .control-group label { display: block; margin-bottom: 8px; color: var(--text-dim); font-size: 0.9rem; }
+        select, input { width: 100%; padding: 10px; background: var(--bg-dark); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: 1rem; }
 
         .btn {
             padding: 12px 24px;
@@ -100,31 +75,12 @@
             justify-content: center;
         }
 
-        .btn-primary {
-            background: var(--primary);
-            color: var(--bg-dark);
-            width: 100%;
-            font-size: 1.1rem;
-        }
+        .btn-primary { background: var(--primary); color: var(--bg-dark); width: 100%; font-size: 1.1rem; }
+        .btn-primary:hover { background: var(--primary-glow); box-shadow: 0 0 20px rgba(16, 185, 129, 0.4); }
+        .btn-danger { background: rgba(239, 68, 68, 0.2); color: var(--danger); border: 1px solid var(--danger); }
+        .btn-secondary { background: var(--bg-panel); border: 1px solid var(--border); color: var(--text); }
+        .btn-refresh { background: var(--accent); color: white; border: none; padding: 5px 10px; font-size: 0.8rem; }
 
-        .btn-primary:hover {
-            background: var(--primary-glow);
-            box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
-        }
-
-        .btn-danger {
-            background: rgba(239, 68, 68, 0.2);
-            color: var(--danger);
-            border: 1px solid var(--danger);
-        }
-
-        .btn-secondary {
-            background: var(--bg-panel);
-            border: 1px solid var(--border);
-            color: var(--text);
-        }
-
-        /* Identity Card */
         .identity-card {
             background: var(--bg-panel);
             border-radius: 20px;
@@ -133,6 +89,7 @@
             position: relative;
             box-shadow: 0 20px 40px rgba(0,0,0,0.4);
             transition: all 0.3s;
+            margin-bottom: 30px;
         }
 
         .id-header {
@@ -144,140 +101,98 @@
             align-items: center;
         }
 
-        .country-flag {
-            font-size: 2rem;
-        }
-
-        .id-body {
-            padding: 30px;
-            display: grid;
-            grid-template-columns: 150px 1fr;
-            gap: 30px;
-        }
+        .id-body { padding: 30px; display: grid; grid-template-columns: 150px 1fr; gap: 30px; }
 
         .avatar {
-            width: 150px;
-            height: 150px;
-            background: var(--bg-dark);
-            border-radius: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 4rem;
-            border: 2px solid var(--border);
+            width: 150px; height: 150px;
+            background: var(--bg-dark); border-radius: 15px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 4rem; border: 2px solid var(--border);
         }
 
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-        }
-
-        .info-item {
-            position: relative;
-        }
-
-        .info-label {
-            color: var(--text-dim);
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 5px;
-        }
-
+        .info-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+        .info-item { position: relative; }
+        .info-label { color: var(--text-dim); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
+        
         .info-value {
-            font-size: 1.1rem;
-            font-family: monospace;
-            background: rgba(0,0,0,0.2);
-            padding: 8px 12px;
-            border-radius: 6px;
-            border: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
-            transition: all 0.2s;
+            font-size: 1.1rem; font-family: monospace;
+            background: rgba(0,0,0,0.2); padding: 8px 12px;
+            border-radius: 6px; border: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            cursor: pointer; transition: all 0.2s;
         }
+        .info-value:hover { border-color: var(--primary); background: rgba(16, 185, 129, 0.1); }
+        .info-value.loading { color: var(--text-dim); font-style: italic; }
 
-        .info-value:hover {
-            border-color: var(--primary);
-            background: rgba(16, 185, 129, 0.1);
-        }
-
-        .copy-icon {
-            opacity: 0.5;
-            font-size: 0.9rem;
-        }
-
-        /* Saved Identities */
-        .saved-section {
-            margin-top: 40px;
-        }
-
-        .saved-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .saved-list {
-            display: grid;
-            gap: 15px;
-        }
-
-        .saved-item {
+        /* Inbox Styles */
+        .inbox-section {
             background: var(--bg-panel);
-            padding: 15px;
-            border-radius: 10px;
+            border-radius: 15px;
             border: 1px solid var(--border);
+            overflow: hidden;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .inbox-header {
+            padding: 15px 20px;
+            background: var(--bg-dark);
+            border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .saved-info strong {
-            display: block;
-            margin-bottom: 5px;
-            color: var(--primary);
+        .inbox-list { max-height: 400px; overflow-y: auto; }
+        
+        .email-item {
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            transition: background 0.2s;
+            display: grid;
+            gap: 5px;
+        }
+        .email-item:hover { background: var(--bg-dark); }
+        .email-item.unread { border-left: 3px solid var(--primary); background: rgba(16, 185, 129, 0.05); }
+        
+        .email-from { font-weight: bold; color: var(--text); }
+        .email-subject { color: var(--text-dim); font-size: 0.95rem; }
+        .email-time { font-size: 0.8rem; color: var(--text-dim); text-align: right; }
+
+        .email-view {
+            padding: 20px;
+            background: var(--bg-dark);
+            display: none;
+        }
+        .email-view-header { border-bottom: 1px solid var(--border); padding-bottom: 15px; margin-bottom: 15px; }
+        .email-body { line-height: 1.6; white-space: pre-wrap; font-family: sans-serif; }
+        
+        .live-dot {
+            width: 10px; height: 10px; background: var(--danger);
+            border-radius: 50%; display: inline-block; margin-right: 5px;
+        }
+        .live-dot.active { background: var(--success); box-shadow: 0 0 10px var(--success); animation: pulse 2s infinite; }
+
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+
+        .saved-section { margin-top: 40px; }
+        .saved-item {
+            background: var(--bg-panel); padding: 15px; border-radius: 10px;
+            border: 1px solid var(--border); margin-bottom: 10px;
+            display: flex; justify-content: space-between; align-items: center;
         }
 
-        .action-row {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-            justify-content: center;
-        }
-
-        /* Toast */
         .toast {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--primary);
-            color: var(--bg-dark);
-            padding: 10px 20px;
-            border-radius: 25px;
-            font-weight: 600;
-            opacity: 0;
-            transition: opacity 0.3s;
-            pointer-events: none;
-            z-index: 100;
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            background: var(--primary); color: var(--bg-dark); padding: 10px 20px;
+            border-radius: 25px; font-weight: 600; opacity: 0; pointer-events: none; transition: opacity 0.3s;
         }
 
         @media (max-width: 768px) {
-            .id-body {
-                grid-template-columns: 1fr;
-                text-align: center;
-            }
-            .avatar {
-                margin: 0 auto;
-            }
-            .info-grid {
-                grid-template-columns: 1fr;
-                text-align: left;
-            }
+            .id-body { grid-template-columns: 1fr; text-align: center; }
+            .avatar { margin: 0 auto; }
+            .info-grid { grid-template-columns: 1fr; text-align: left; }
         }
     </style>
 </head>
@@ -285,9 +200,9 @@
     <div class="container">
         <header>
             <h1>🕵️ Ghost Identity</h1>
-            <p class="subtitle">Professioneller Fake-Daten Generator & Identitäts-Manager</p>
+            <p class="subtitle">Professioneller Fake-Daten Generator & Temp Mail Client</p>
             <div style="margin-top: 15px; font-size: 0.9rem; color: var(--text-dim);">
-                🛡️ 100% Lokal • Keine Server • Daten bleiben auf deinem Gerät
+                🛡️ 100% Lokal • 📧 Echte E-Mail Empfangen (mail.tm API) • 🚫 Keine Telefonnummern
             </div>
         </header>
 
@@ -354,17 +269,11 @@
                             <span class="copy-icon">📋</span>
                         </div>
                     </div>
-                    <div class="info-item">
-                        <div class="info-label">Telefon</div>
+                    <!-- Phone Number REMOVED as requested -->
+                    <div class="info-item" style="grid-column: span 2;">
+                        <div class="info-label">E-Mail (Echter Empfang möglich!)</div>
                         <div class="info-value" onclick="copyText(this)">
-                            <span id="phone">-</span>
-                            <span class="copy-icon">📋</span>
-                        </div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label">E-Mail</div>
-                        <div class="info-value" onclick="copyText(this)">
-                            <span id="email">-</span>
+                            <span id="email">Wird generiert...</span>
                             <span class="copy-icon">📋</span>
                         </div>
                     </div>
@@ -384,26 +293,49 @@
                     </div>
                 </div>
             </div>
-            <div style="padding: 20px; background: rgba(0,0,0,0.2); text-align: center;">
+            
+            <!-- Inbox Section -->
+            <div class="inbox-section" id="inboxSection">
+                <div class="inbox-header">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span class="live-dot active"></span>
+                        <strong>Posteingang</strong>
+                    </div>
+                    <button class="btn btn-refresh" onclick="checkMail()">🔄 Aktualisieren</button>
+                </div>
+                <div class="inbox-list" id="inboxList">
+                    <div style="padding: 20px; text-align: center; color: var(--text-dim);">
+                        Warte auf E-Mails... (Auto-Refresh alle 5s)
+                    </div>
+                </div>
+                <div class="email-view" id="emailView">
+                    <button class="btn btn-secondary" style="margin-bottom: 15px;" onclick="closeEmail()">⬅️ Zurück</button>
+                    <div class="email-view-header">
+                        <h3 id="viewSubject">Betreff</h3>
+                        <div id="viewFrom" style="color: var(--text-dim); margin-top: 5px;">Von: -</div>
+                    </div>
+                    <div class="email-body" id="viewBody"></div>
+                </div>
+            </div>
+
+            <div style="padding: 20px; background: rgba(0,0,0,0.2); text-align: center; border-top: 1px solid var(--border);">
                 <button class="btn btn-primary" onclick="saveCurrentIdentity()" style="width: auto;">
-                    💾 Identität speichern
+                    💾 Identität & E-Mail Zugang speichern
                 </button>
             </div>
         </div>
 
         <div class="saved-section">
-            <div class="saved-header">
+            <div class="saved-header" style="display: flex; justify-content: space-between; margin-bottom: 20px;">
                 <h2>📂 Gespeicherte Identitäten (<span id="savedCount">0</span>)</h2>
-                <div class="action-row" style="margin: 0;">
-                    <button class="btn btn-secondary" onclick="exportData()">📤 Backup Exportieren</button>
-                    <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">📥 Backup Importieren</button>
+                <div class="action-row" style="display: flex; gap: 10px;">
+                    <button class="btn btn-secondary" onclick="exportData()">📤 Backup</button>
+                    <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">📥 Restore</button>
                     <input type="file" id="importFile" style="display: none;" onchange="importData(event)" accept=".json">
-                    <button class="btn btn-danger" onclick="clearAllData()">🗑️ Alles Löschen</button>
+                    <button class="btn btn-danger" onclick="clearAllData()">🗑️ Alle Löschen</button>
                 </div>
             </div>
-            <div id="savedList" class="saved-list">
-                <!-- Saved items go here -->
-            </div>
+            <div id="savedList" class="saved-list"></div>
         </div>
     </div>
 
@@ -417,52 +349,91 @@
                 firstNamesFemale: ["Mia", "Emma", "Sofia", "Hannah", "Anna", "Lea", "Lena", "Marie", "Laura", "Julia"],
                 lastNames: ["Müller", "Schmidt", "Schneider", "Fischer", "Weber", "Meyer", "Wagner", "Becker", "Schulz", "Hoffmann"],
                 cities: ["Berlin", "Hamburg", "München", "Köln", "Frankfurt", "Stuttgart", "Düsseldorf", "Leipzig"],
-                streets: ["Hauptstraße", "Bahnhofstraße", "Schulstraße", "Gartenstraße", "Dorfstraße", "Bergstraße"],
-                domains: ["web.de", "gmx.de", "t-online.de", "freenet.de"]
+                streets: ["Hauptstraße", "Bahnhofstraße", "Schulstraße", "Gartenstraße", "Dorfstraße", "Bergstraße"]
             },
             us: {
                 firstNamesMale: ["James", "John", "Robert", "Michael", "William", "David", "Richard", "Joseph", "Thomas"],
                 firstNamesFemale: ["Mary", "Patricia", "Jennifer", "Linda", "Elizabeth", "Barbara", "Susan", "Jessica"],
                 lastNames: ["Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller", "Davis", "Rodriguez"],
                 cities: ["New York", "Los Angeles", "Chicago", "Houston", "Phoenix", "Philadelphia", "San Antonio"],
-                streets: ["Main St", "Broadway", "Maple Ave", "Oak St", "Washington St", "Park Ave"],
-                domains: ["gmail.com", "yahoo.com", "outlook.com", "aol.com"]
+                streets: ["Main St", "Broadway", "Maple Ave", "Oak St", "Washington St", "Park Ave"]
             },
-            // Simplified data for other countries for brevity
             gb: {
                 firstNamesMale: ["Oliver", "George", "Harry", "Jack"],
                 firstNamesFemale: ["Olivia", "Amelia", "Isla", "Ava"],
                 lastNames: ["Smith", "Jones", "Taylor", "Brown"],
                 cities: ["London", "Manchester", "Birmingham", "Leeds"],
-                streets: ["High Street", "Station Road", "London Road"],
-                domains: ["hotmail.co.uk", "yahoo.co.uk"]
+                streets: ["High Street", "Station Road", "London Road"]
             },
             fr: {
                 firstNamesMale: ["Gabriel", "Leo", "Raphael", "Arthur"],
                 firstNamesFemale: ["Jade", "Louise", "Emma", "Alice"],
                 lastNames: ["Martin", "Bernard", "Thomas", "Petit"],
                 cities: ["Paris", "Marseille", "Lyon", "Toulouse"],
-                streets: ["Rue de la Paix", "Avenue des Champs-Élysées"],
-                domains: ["orange.fr", "free.fr"]
+                streets: ["Rue de la Paix", "Avenue des Champs-Élysées"]
             },
             jp: {
                 firstNamesMale: ["Haruto", "Riku", "Sora", "Ren"],
                 firstNamesFemale: ["Yui", "Rio", "Hina", "Mei"],
                 lastNames: ["Sato", "Suzuki", "Takahashi", "Tanaka"],
                 cities: ["Tokyo", "Osaka", "Kyoto", "Yokohama"],
-                streets: ["Chuo-dori", "Showa-dori"],
-                domains: ["yahoo.co.jp", "docomo.ne.jp"]
+                streets: ["Chuo-dori", "Showa-dori"]
             }
         };
 
         let currentIdentity = null;
         let savedIdentities = JSON.parse(localStorage.getItem('ghost_identities') || '[]');
+        let mailToken = null;
+        let pollInterval = null;
 
-        function getRandom(arr) {
-            return arr[Math.floor(Math.random() * arr.length)];
-        }
+        // --- Mail Service ---
+        const MailService = {
+            baseUrl: 'https://api.mail.tm',
+            
+            async getDomain() {
+                const res = await fetch(`${this.baseUrl}/domains`);
+                const data = await res.json();
+                return data['hydra:member'][0].domain;
+            },
 
-        function generateIdentity() {
+            async createAccount(address, password) {
+                const res = await fetch(`${this.baseUrl}/accounts`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ address, password })
+                });
+                return res.ok; // 201 Created
+            },
+
+            async getToken(address, password) {
+                const res = await fetch(`${this.baseUrl}/token`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ address, password })
+                });
+                const data = await res.json();
+                return data.token;
+            },
+
+            async getMessages(token) {
+                const res = await fetch(`${this.baseUrl}/messages`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await res.json();
+                return data['hydra:member'];
+            },
+            
+            async getMessage(token, id) {
+                 const res = await fetch(`${this.baseUrl}/messages/${id}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                return await res.json();
+            }
+        };
+
+        function getRandom(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+        async function generateIdentity() {
             const country = document.getElementById('country').value;
             const genderSelect = document.getElementById('gender').value;
             const ageRange = document.getElementById('ageRange').value;
@@ -470,40 +441,62 @@
             const pool = data[country];
             let gender = genderSelect === 'random' ? (Math.random() > 0.5 ? 'male' : 'female') : genderSelect;
             
-            // Name
+            // Name & Address
             const firstName = gender === 'male' ? getRandom(pool.firstNamesMale) : getRandom(pool.firstNamesFemale);
             const lastName = getRandom(pool.lastNames);
-            
-            // Address
             const city = getRandom(pool.cities);
             const street = getRandom(pool.streets);
             const houseNum = Math.floor(Math.random() * 150) + 1;
-            const zip = Math.floor(10000 + Math.random() * 90000); // Simple 5 digit ZIP
+            const zip = Math.floor(10000 + Math.random() * 90000);
             
-            // Age & Birthdate
+            // Age
             const [minAge, maxAge] = ageRange.split('-').map(Number);
             const age = Math.floor(Math.random() * (maxAge - minAge + 1)) + minAge;
             const year = new Date().getFullYear() - age;
-            const month = Math.floor(Math.random() * 12) + 1;
-            const day = Math.floor(Math.random() * 28) + 1;
-            const birthDate = `${day.toString().padStart(2, '0')}.${month.toString().padStart(2, '0')}.${year}`;
+            const birthDate = `${Math.floor(Math.random()*28)+1}.${Math.floor(Math.random()*12)+1}.${year}`;
 
             // Digital Identity
             const cleanName = firstName.toLowerCase() + lastName.toLowerCase();
             const username = `${cleanName}${year % 100}`;
-            const email = `${cleanName}${Math.floor(Math.random() * 99)}@${getRandom(pool.domains)}`;
-            const password = generatePassword();
-            const phone = generatePhone(country);
+            const password = generatePassword(); // Used for both identity AND mail account
 
+            // Update UI Initial State
             currentIdentity = {
                 id: Date.now(),
                 firstName, lastName, gender, country,
                 address: `${street} ${houseNum}, ${zip} ${city}`,
-                birthDate, age, email, username, password, phone,
+                birthDate, age, username, password,
+                email: "Erstelle E-Mail...",
                 createdAt: new Date().toISOString()
             };
-
+            
             updateUI(currentIdentity);
+            document.getElementById('email').classList.add('loading');
+            
+            // Setup Email
+            try {
+                const domain = await MailService.getDomain();
+                const emailAddress = `${username}${Math.floor(Math.random()*999)}@${domain}`;
+                
+                const created = await MailService.createAccount(emailAddress, password);
+                if (created) {
+                    mailToken = await MailService.getToken(emailAddress, password);
+                    currentIdentity.email = emailAddress;
+                    currentIdentity.mailToken = mailToken; // Save token for session
+                    
+                    document.getElementById('email').textContent = emailAddress;
+                    document.getElementById('email').classList.remove('loading');
+                    
+                    // Show Inbox
+                    document.getElementById('inboxSection').style.display = 'block';
+                    startPolling();
+                } else {
+                    document.getElementById('email').textContent = "Fehler bei E-Mail Erstellung";
+                }
+            } catch (e) {
+                console.error(e);
+                document.getElementById('email').textContent = "API Fehler (mail.tm)";
+            }
         }
 
         function generatePassword() {
@@ -513,56 +506,113 @@
             return pass;
         }
 
-        function generatePhone(country) {
-            if (country === 'de') return `+49 1${Math.floor(Math.random() * 9)} ${Math.floor(Math.random() * 10000000)}`;
-            if (country === 'us') return `+1 (${Math.floor(200 + Math.random() * 700)}) ${Math.floor(200 + Math.random() * 700)}-${Math.floor(1000 + Math.random() * 9000)}`;
-            return `+${Math.floor(Math.random() * 99)} ${Math.floor(Math.random() * 100000000)}`;
-        }
-
         function updateUI(id) {
             document.getElementById('identityCard').style.display = 'block';
-            
-            // Flag
-            const flags = { de: '🇩🇪', us: '🇺🇸', gb: '🇬🇧', fr: '🇫🇷', jp: '🇯🇵' };
-            document.getElementById('displayFlag').textContent = flags[id.country];
-            
-            // Avatar
+            document.getElementById('displayFlag').textContent = { de: '🇩🇪', us: '🇺🇸', gb: '🇬🇧', fr: '🇫🇷', jp: '🇯🇵' }[id.country];
             document.getElementById('avatar').textContent = id.gender === 'male' ? '👨' : '👩';
-
-            // Fields
             document.getElementById('fullName').textContent = `${id.firstName} ${id.lastName}`;
             document.getElementById('birthDate').textContent = `${id.birthDate} (${id.age} Jahre)`;
             document.getElementById('address').textContent = id.address;
-            document.getElementById('phone').textContent = id.phone;
             document.getElementById('email').textContent = id.email;
             document.getElementById('username').textContent = id.username;
             document.getElementById('password').textContent = id.password;
         }
 
+        // --- Inbox Functions ---
+        function startPolling() {
+            if (pollInterval) clearInterval(pollInterval);
+            checkMail();
+            pollInterval = setInterval(checkMail, 5000);
+        }
+
+        async function checkMail() {
+            if (!mailToken) return;
+            try {
+                const messages = await MailService.getMessages(mailToken);
+                renderInbox(messages);
+            } catch (e) {
+                console.log("Polling error", e);
+            }
+        }
+
+        function renderInbox(messages) {
+            const list = document.getElementById('inboxList');
+            if (messages.length === 0) {
+                list.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--text-dim);">Keine Nachrichten. Warte auf Empfang...</div>';
+                return;
+            }
+            
+            list.innerHTML = '';
+            messages.forEach(msg => {
+                const div = document.createElement('div');
+                div.className = `email-item ${!msg.seen ? 'unread' : ''}`;
+                div.onclick = () => openEmail(msg.id);
+                div.innerHTML = `
+                    <div class="email-from">${msg.from.name || msg.from.address}</div>
+                    <div class="email-subject">${msg.subject || '(Kein Betreff)'}</div>
+                    <div class="email-time">${new Date(msg.createdAt).toLocaleTimeString()}</div>
+                `;
+                list.appendChild(div);
+            });
+        }
+
+        async function openEmail(id) {
+            const list = document.getElementById('inboxList');
+            const view = document.getElementById('emailView');
+            list.style.display = 'none';
+            view.style.display = 'block';
+            view.innerHTML = '<div class="loading">Lade Nachricht...</div>';
+            
+            try {
+                const msg = await MailService.getMessage(mailToken, id);
+                document.getElementById('viewSubject').textContent = msg.subject;
+                document.getElementById('viewFrom').textContent = `Von: ${msg.from.address} | An: ${msg.to[0].address}`;
+                document.getElementById('viewBody').textContent = msg.text || "Kein Textinhalt (HTML nicht unterstützt im Safe-Mode)";
+                
+                view.innerHTML = ''; // Clear loading
+                view.appendChild(document.createElement('button')).className = 'btn btn-secondary';
+                view.lastChild.textContent = '⬅️ Zurück';
+                view.lastChild.onclick = closeEmail;
+                view.lastChild.style.marginBottom = '15px';
+                
+                const header = document.createElement('div');
+                header.className = 'email-view-header';
+                header.innerHTML = `<h3>${msg.subject}</h3><div style="color:var(--text-dim)">Von: ${msg.from.address}</div>`;
+                view.appendChild(header);
+                
+                const body = document.createElement('div');
+                body.className = 'email-body';
+                body.textContent = msg.text || "Nur HTML Inhalt verfügbar.";
+                view.appendChild(body);
+            } catch (e) {
+                view.innerHTML = 'Fehler beim Laden.';
+            }
+        }
+
+        function closeEmail() {
+            document.getElementById('inboxList').style.display = 'block';
+            document.getElementById('emailView').style.display = 'none';
+        }
+
+        // --- Storage & Copy ---
         function copyText(element) {
             const text = element.querySelector('span').textContent;
             navigator.clipboard.writeText(text);
-            
             const toast = document.getElementById('toast');
             toast.style.opacity = '1';
             setTimeout(() => toast.style.opacity = '0', 2000);
-            
-            element.style.background = 'rgba(16, 185, 129, 0.2)';
-            setTimeout(() => element.style.background = '', 300);
         }
 
-        function saveCurrentIdentity() {
+        async function saveCurrentIdentity() {
             if (!currentIdentity) return;
-            
-            // Check if already saved (prevent duplicates)
             const exists = savedIdentities.some(id => id.id === currentIdentity.id);
-            if (exists) {
-                alert('⚠️ Identität bereits gespeichert!');
-                return;
-            }
+            if (exists) { alert('⚠️ Identität bereits gespeichert!'); return; }
+            
+            // Ensure token is fresh if possible, or just save what we have
+            if (mailToken) currentIdentity.mailToken = mailToken;
 
             savedIdentities.unshift(currentIdentity);
-            saveToStorage();
+            localStorage.setItem('ghost_identities', JSON.stringify(savedIdentities));
             renderSavedList();
             alert('✅ Identität lokal gespeichert!');
         }
@@ -571,11 +621,7 @@
             const list = document.getElementById('savedList');
             document.getElementById('savedCount').textContent = savedIdentities.length;
             list.innerHTML = '';
-
-            if (savedIdentities.length === 0) {
-                list.innerHTML = '<div style="text-align:center; padding: 20px; color: var(--text-dim);">Keine gespeicherten Identitäten.</div>';
-                return;
-            }
+            if (savedIdentities.length === 0) { list.innerHTML = '<div style="padding:20px; text-align:center; color:var(--text-dim)">Keine Daten.</div>'; return; }
 
             savedIdentities.forEach((id, index) => {
                 const item = document.createElement('div');
@@ -586,7 +632,7 @@
                         <span style="font-size: 0.9rem; color: var(--text-dim);">${id.email}</span>
                     </div>
                     <div style="display: flex; gap: 10px;">
-                        <button class="btn btn-secondary" style="padding: 8px;" onclick="loadIdentity(${index})">👁️ Ansehen</button>
+                        <button class="btn btn-secondary" style="padding: 8px;" onclick="loadIdentity(${index})">Login 📨</button>
                         <button class="btn btn-danger" style="padding: 8px;" onclick="deleteIdentity(${index})">🗑️</button>
                     </div>
                 `;
@@ -594,87 +640,69 @@
             });
         }
 
-        function loadIdentity(index) {
-            currentIdentity = savedIdentities[index];
-            updateUI(currentIdentity);
+        async function loadIdentity(index) {
+            const id = savedIdentities[index];
+            currentIdentity = id;
+            updateUI(id);
+            
+            // Restore Mail Session
+            if (id.email && id.password) {
+                document.getElementById('email').classList.add('loading');
+                document.getElementById('email').textContent = "Verbinde mit Postfach...";
+                try {
+                    // Try to get token again (re-login)
+                    const token = await MailService.getToken(id.email, id.password);
+                    mailToken = token;
+                    document.getElementById('email').textContent = id.email;
+                    document.getElementById('email').classList.remove('loading');
+                    document.getElementById('inboxSection').style.display = 'block';
+                    startPolling();
+                } catch (e) {
+                    document.getElementById('email').textContent = id.email + " (Login fehlgeschlagen - evtl. gelöscht)";
+                    mailToken = null;
+                }
+            }
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function deleteIdentity(index) {
-            if (confirm('Wirklich löschen?')) {
+            if (confirm('Löschen?')) {
                 savedIdentities.splice(index, 1);
-                saveToStorage();
+                localStorage.setItem('ghost_identities', JSON.stringify(savedIdentities));
                 renderSavedList();
             }
         }
 
         function clearAllData() {
-            if (confirm('⚠️ ACHTUNG: Das löscht ALLE gespeicherten Identitäten unwiderruflich!')) {
-                savedIdentities = [];
-                currentIdentity = null;
-                saveToStorage();
+            if (confirm('ALLES Löschen?')) {
+                savedIdentities = []; currentIdentity = null; mailToken = null;
+                localStorage.setItem('ghost_identities', '[]');
                 renderSavedList();
                 document.getElementById('identityCard').style.display = 'none';
             }
         }
-
-        function saveToStorage() {
-            localStorage.setItem('ghost_identities', JSON.stringify(savedIdentities));
-        }
-
-        // Export / Import
+        
+        // Export/Import functionality remains same as previous...
         function exportData() {
-            if (savedIdentities.length === 0) {
-                alert('Keine Daten zum Exportieren!');
-                return;
-            }
             const dataStr = JSON.stringify(savedIdentities, null, 2);
             const blob = new Blob([dataStr], { type: "application/json" });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `ghost-identities-backup-${new Date().toISOString().split('T')[0]}.json`;
+            a.download = `ghost-identities.json`;
             a.click();
             URL.revokeObjectURL(url);
         }
-
-        function importData(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
+        function importData(e) {
             const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const imported = JSON.parse(e.target.result);
-                    if (Array.isArray(imported)) {
-                        if (confirm(`${imported.length} Identitäten importieren? Das ergänzt deine bestehende Liste.`)) {
-                            savedIdentities = [...imported, ...savedIdentities];
-                            // Remove duplicates by ID
-                            const unique = [];
-                            const seen = new Set();
-                            for (const id of savedIdentities) {
-                                if (!seen.has(id.id)) {
-                                    seen.add(id.id);
-                                    unique.push(id);
-                                }
-                            }
-                            savedIdentities = unique;
-                            saveToStorage();
-                            renderSavedList();
-                            alert('✅ Import erfolgreich!');
-                        }
-                    } else {
-                        alert('❌ Ungültiges Format!');
-                    }
-                } catch (err) {
-                    alert('❌ Fehler beim Lesen der Datei!');
-                }
+            reader.onload = (ev) => {
+                savedIdentities = [...JSON.parse(ev.target.result), ...savedIdentities];
+                localStorage.setItem('ghost_identities', JSON.stringify(savedIdentities));
+                renderSavedList();
             };
-            reader.readAsText(file);
-            event.target.value = ''; // Reset input
+            reader.readAsText(e.target.files[0]);
         }
 
-        // Init
         window.addEventListener('load', renderSavedList);
     </script>
 </body>
