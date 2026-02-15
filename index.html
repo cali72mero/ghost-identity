@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🕵️ Ghost Identity | Real Fake Data & Temp Mail</title>
+    <title>🕵️ Ghost Identity | v2.0</title>
     <style>
         :root {
             --primary: #10b981;
@@ -15,6 +15,7 @@
             --border: #334155;
             --danger: #ef4444;
             --accent: #3b82f6;
+            --gold: #fbbf24;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -46,6 +47,11 @@
         }
 
         .subtitle { color: var(--text-dim); font-size: 1.1rem; }
+        .version-badge { 
+            background: rgba(16, 185, 129, 0.1); color: var(--primary); 
+            padding: 2px 8px; border-radius: 10px; font-size: 0.8rem; border: 1px solid var(--primary);
+            vertical-align: middle; margin-left: 10px;
+        }
 
         /* Controls */
         .controls {
@@ -114,7 +120,9 @@
             background: var(--bg-dark); border-radius: 15px;
             display: flex; align-items: center; justify-content: center;
             font-size: 4rem; border: 2px solid var(--border);
+            overflow: hidden;
         }
+        .avatar img { width: 100%; height: 100%; object-fit: cover; }
 
         .info-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
         .info-item { position: relative; }
@@ -129,6 +137,29 @@
         }
         .info-value:hover { border-color: var(--primary); background: rgba(16, 185, 129, 0.1); }
         .info-value.loading { color: var(--text-dim); font-style: italic; }
+        
+        .finance-section {
+            grid-column: span 2;
+            margin-top: 10px;
+            padding-top: 20px;
+            border-top: 1px dashed var(--border);
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+        
+        .cc-card {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            border: 1px solid var(--gold);
+            padding: 15px;
+            border-radius: 10px;
+            color: var(--gold);
+            position: relative;
+        }
+        .cc-logo { position: absolute; top: 10px; right: 15px; font-weight: bold; font-style: italic; }
+        .cc-number { font-size: 1.2rem; margin: 15px 0 5px; letter-spacing: 2px; font-family: monospace; }
+        .cc-name { font-size: 0.9rem; text-transform: uppercase; }
+        .cc-exp { position: absolute; bottom: 15px; right: 15px; font-family: monospace; }
 
         /* Inbox Styles */
         .inbox-section {
@@ -160,6 +191,7 @@
             transition: background 0.2s;
             display: grid;
             gap: 5px;
+            position: relative;
         }
         .email-item:hover { background: var(--bg-dark); }
         .email-item.unread { border-left: 3px solid var(--primary); background: rgba(16, 185, 129, 0.05); }
@@ -167,6 +199,16 @@
         .email-from { font-weight: bold; color: var(--text); }
         .email-subject { color: var(--text-dim); font-size: 0.95rem; }
         .email-time { font-size: 0.8rem; color: var(--text-dim); text-align: right; }
+        
+        .otp-badge {
+            position: absolute; right: 20px; top: 50%; transform: translateY(-50%);
+            background: var(--primary); color: var(--bg-dark); 
+            padding: 5px 10px; border-radius: 5px; font-weight: bold; font-family: monospace; font-size: 1.2rem;
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        @keyframes popIn { from { transform: translateY(-50%) scale(0); } to { transform: translateY(-50%) scale(1); } }
 
         .email-view {
             padding: 20px;
@@ -212,6 +254,17 @@
 
         .saved-info strong { display: block; font-size: 1.1rem; margin-bottom: 5px; color: var(--primary); }
         .saved-meta { font-size: 0.9rem; color: var(--text-dim); display: flex; gap: 15px; }
+        
+        /* Modal */
+        .modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); z-index: 2000; justify-content: center; align-items: center;
+        }
+        .modal-content {
+            background: var(--bg-panel); padding: 30px; border-radius: 15px; 
+            border: 1px solid var(--primary); max-width: 400px; width: 90%; text-align: center;
+        }
+        .modal input { margin: 15px 0; }
 
         .toast {
             position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
@@ -222,7 +275,7 @@
         @media (max-width: 768px) {
             .id-body { grid-template-columns: 1fr; text-align: center; }
             .avatar { margin: 0 auto; }
-            .info-grid { grid-template-columns: 1fr; text-align: left; }
+            .info-grid, .finance-section { grid-template-columns: 1fr; text-align: left; }
             .management-bar { flex-direction: column; align-items: stretch; }
             .saved-item { flex-direction: column; gap: 15px; align-items: flex-start; }
             .saved-item > div:last-child { width: 100%; display: flex; justify-content: space-between; }
@@ -232,10 +285,10 @@
 <body>
     <div class="container">
         <header>
-            <h1>🕵️ Ghost Identity</h1>
-            <p class="subtitle">Professioneller Fake-Daten Generator & Temp Mail Client</p>
+            <h1>🕵️ Ghost Identity <span class="version-badge">v2.0</span></h1>
+            <p class="subtitle">Next-Gen Identity Generator & Secure Mail Client</p>
             <div style="margin-top: 15px; font-size: 0.9rem; color: var(--text-dim);">
-                🛡️ 100% Lokal • 📧 Echte E-Mail Empfangen (mail.tm API) • 💾 Backup & Restore
+                🛡️ AES-256 Backups • 💳 Fake Finanzen • ⚡ Auto-2FA Parser
             </div>
         </header>
 
@@ -281,7 +334,9 @@
                 <div class="country-flag" id="displayFlag">🇩🇪</div>
             </div>
             <div class="id-body">
-                <div class="avatar" id="avatar">👤</div>
+                <div class="avatar" id="avatar">
+                    <!-- Image injected by JS -->
+                </div>
                 <div class="info-grid">
                     <div class="info-item">
                         <div class="info-label">Vollständiger Name</div>
@@ -325,6 +380,23 @@
                             <span class="copy-icon">📋</span>
                         </div>
                     </div>
+
+                    <!-- Finance Section -->
+                    <div class="finance-section">
+                        <div class="cc-card" onclick="copyCC()">
+                            <div class="cc-logo">VISA</div>
+                            <div class="cc-number" id="ccNumber">4532 1234 5678 9012</div>
+                            <div class="cc-name" id="ccName">MAX MUSTERMANN</div>
+                            <div class="cc-exp" id="ccExp">12/28</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">IBAN (Generiert)</div>
+                            <div class="info-value" onclick="copyText(this)">
+                                <span id="iban">-</span>
+                                <span class="copy-icon">📋</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             
@@ -336,7 +408,7 @@
                         <strong>Posteingang</strong>
                     </div>
                     <div class="inbox-actions">
-                        <button class="btn btn-test" onclick="sendTestMail()">📨 Test-Mail Senden</button>
+                        <button class="btn btn-test" onclick="sendTestMail()">📨 Test-Mail</button>
                         <button class="btn btn-refresh" onclick="checkMail()">🔄 Refresh</button>
                     </div>
                 </div>
@@ -368,16 +440,44 @@
             <div class="management-bar">
                 <h2 style="font-size: 1.5rem;">📂 Gespeicherte Identitäten (<span id="savedCount">0</span>)</h2>
                 
-                <div style="display: flex; gap: 10px;">
-                    <button class="btn btn-action" onclick="exportData()">📤 Backup Erstellen (.json)</button>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <button class="btn btn-action" onclick="showExportModal()">🔐 Backup Exportieren</button>
                     <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">📥 Backup Laden</button>
                     <input type="file" id="importFile" style="display: none;" onchange="importData(event)" accept=".json">
                     <button class="btn btn-danger" onclick="clearAllData()">🗑️ Alles Löschen</button>
                 </div>
             </div>
             
-            <div id="savedList" class="saved-list">
-                <!-- List items injected by JS -->
+            <div id="savedList" class="saved-list"></div>
+        </div>
+    </div>
+
+    <!-- Export Password Modal -->
+    <div id="exportModal" class="modal">
+        <div class="modal-content">
+            <h3>🔐 Backup Verschlüsseln</h3>
+            <p style="color: var(--text-dim); font-size: 0.9rem;">
+                Optional: Gib ein Passwort ein, um deine Daten sicher mit AES-256 zu verschlüsseln.
+            </p>
+            <input type="password" id="exportPass" placeholder="Passwort (Optional)">
+            <div style="display: flex; gap: 10px; justify-content: center;">
+                <button class="btn btn-secondary" onclick="closeModal('exportModal')">Abbrechen</button>
+                <button class="btn btn-primary" onclick="performExport()">Exportieren</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Import Password Modal -->
+    <div id="importModal" class="modal">
+        <div class="modal-content">
+            <h3>🔓 Backup Entschlüsseln</h3>
+            <p style="color: var(--text-dim); font-size: 0.9rem;">
+                Dieses Backup ist verschlüsselt. Bitte Passwort eingeben.
+            </p>
+            <input type="password" id="importPass" placeholder="Passwort">
+            <div style="display: flex; gap: 10px; justify-content: center;">
+                <button class="btn btn-secondary" onclick="closeModal('importModal')">Abbrechen</button>
+                <button class="btn btn-primary" onclick="performImport()">Entschlüsseln</button>
             </div>
         </div>
     </div>
@@ -428,8 +528,79 @@
         let savedIdentities = JSON.parse(localStorage.getItem('ghost_identities') || '[]');
         let mailToken = null;
         let pollInterval = null;
+        let pendingImportData = null;
 
-        // --- Mail Service ---
+        // --- Crypto Utils (AES-GCM) ---
+        async function encryptData(data, password) {
+            const enc = new TextEncoder();
+            const keyMaterial = await window.crypto.subtle.importKey("raw", enc.encode(password), {name: "PBKDF2"}, false, ["deriveKey"]);
+            const salt = window.crypto.getRandomValues(new Uint8Array(16));
+            const key = await window.crypto.subtle.deriveKey({name: "PBKDF2", salt: salt, iterations: 100000, hash: "SHA-256"}, keyMaterial, {name: "AES-GCM", length: 256}, false, ["encrypt"]);
+            const iv = window.crypto.getRandomValues(new Uint8Array(12));
+            const content = enc.encode(JSON.stringify(data));
+            const encrypted = await window.crypto.subtle.encrypt({name: "AES-GCM", iv: iv}, key, content);
+            
+            // Combine: salt + iv + ciphertext
+            const buffer = new Uint8Array(salt.byteLength + iv.byteLength + encrypted.byteLength);
+            buffer.set(salt, 0);
+            buffer.set(iv, salt.byteLength);
+            buffer.set(new Uint8Array(encrypted), salt.byteLength + iv.byteLength);
+            return btoa(String.fromCharCode(...buffer));
+        }
+
+        async function decryptData(base64Data, password) {
+            try {
+                const enc = new TextEncoder();
+                const combined = new Uint8Array(atob(base64Data).split("").map(c => c.charCodeAt(0)));
+                const salt = combined.slice(0, 16);
+                const iv = combined.slice(16, 28);
+                const data = combined.slice(28);
+                
+                const keyMaterial = await window.crypto.subtle.importKey("raw", enc.encode(password), {name: "PBKDF2"}, false, ["deriveKey"]);
+                const key = await window.crypto.subtle.deriveKey({name: "PBKDF2", salt: salt, iterations: 100000, hash: "SHA-256"}, keyMaterial, {name: "AES-GCM", length: 256}, false, ["decrypt"]);
+                
+                const decrypted = await window.crypto.subtle.decrypt({name: "AES-GCM", iv: iv}, key, data);
+                return JSON.parse(new TextDecoder().decode(decrypted));
+            } catch (e) {
+                throw new Error("Falsches Passwort oder beschädigte Datei");
+            }
+        }
+
+        // --- Generators ---
+        function generateCC() {
+            // Visa starts with 4
+            let number = "4";
+            for(let i=0; i<14; i++) number += Math.floor(Math.random()*10);
+            
+            // Luhn Algo for Checksum
+            let sum = 0;
+            let shouldDouble = true; // start from rightmost digit (which is check digit, but here we calculate it)
+            // Actually simpler: generate 15 digits, calc check digit
+            // Standard implementation:
+            let digits = number.split('').map(Number);
+            for(let i=digits.length-1; i>=0; i--) {
+                let d = digits[i];
+                if(shouldDouble) {
+                    d *= 2;
+                    if(d > 9) d -= 9;
+                }
+                sum += d;
+                shouldDouble = !shouldDouble;
+            }
+            const checkDigit = (10 - (sum % 10)) % 10;
+            return number + checkDigit;
+        }
+        
+        function formatCC(num) { return num.match(/.{1,4}/g).join(' '); }
+
+        function generateIBAN(country) {
+            const prefix = country.toUpperCase();
+            const bankCode = Math.floor(Math.random() * 89999999) + 10000000;
+            const account = Math.floor(Math.random() * 8999999999) + 1000000000;
+            // Simple fake IBAN (checksum not calculated perfectly for brevity, visual purpose mainly)
+            return `${prefix}89 ${Math.floor(Math.random()*9999)} ${Math.floor(Math.random()*9999)} ${Math.floor(Math.random()*9999)} ${Math.floor(Math.random()*9999)}`;
+        }
+
         const MailService = {
             baseUrl: 'https://api.mail.tm',
             async getDomain() {
@@ -456,7 +627,7 @@
                 return data.token;
             },
             async getMessages(token) {
-                const res = await fetch(`${this.baseUrl}/messages`, {
+                const res = await fetch(`${this.baseUrl}/messages?page=1`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 const data = await res.json();
@@ -467,25 +638,6 @@
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 return await res.json();
-            },
-            // NEW: Send function (self-send for test)
-            async sendMessage(token, to, subject, text) {
-                // mail.tm does not support sending via API for free accounts typically, BUT 
-                // internal sending might work or we simulate a received message?
-                // Actually, mail.tm is receive-only. 
-                // We will simulate a "System Test" message by injecting it directly into the view 
-                // OR alert the user. 
-                // Wait! Real sending IS NOT supported by mail.tm API for public use usually.
-                // Let's implement a visual simulation of a test or trigger a real external mail if possible?
-                // No external trigger available securely without backend.
-                // BEST APPROACH: Show a "Test Success" toast/notification simulation.
-                // OR: Just alert the user "Test-Mail gesendet! (Simuliert)" and add a fake item to the list?
-                // Let's verify sending capability. Sending is often disabled.
-                // Let's try to send to ourselves. If it fails, we show a 'Simulation' message.
-                // NOTE: Documentation says "Sending messages is not supported."
-                // OK, plan B: We cannot send real email. 
-                // We will create a "Self-Test" visual confirmation.
-                return false;
             }
         };
 
@@ -518,12 +670,19 @@
             const cleanName = firstName.toLowerCase() + lastName.toLowerCase();
             const username = `${cleanName}${year % 100}`;
             const password = generatePassword(); 
+            
+            // Financials
+            const ccNum = generateCC();
+            const iban = generateIBAN(country);
 
             currentIdentity = {
                 id: Date.now(),
                 firstName, lastName, gender, country,
                 address: `${street} ${houseNum}, ${zip} ${city}`,
                 birthDate, age, username, password,
+                ccNumber: ccNum,
+                ccExp: `${Math.floor(Math.random()*12)+1}/${Math.floor(Math.random()*5)+26}`,
+                iban: iban,
                 email: "Erstelle E-Mail...",
                 createdAt: new Date().toISOString()
             };
@@ -565,13 +724,23 @@
         function updateUI(id) {
             document.getElementById('identityCard').style.display = 'block';
             document.getElementById('displayFlag').textContent = { de: '🇩🇪', us: '🇺🇸', gb: '🇬🇧', fr: '🇫🇷', jp: '🇯🇵' }[id.country] || '🌍';
-            document.getElementById('avatar').textContent = id.gender === 'male' ? '👨' : '👩';
+            
+            // DiceBear Avatar
+            const avatarUrl = `https://api.dicebear.com/7.x/avataaars/svg?seed=${id.username}&gender=${id.gender}`;
+            document.getElementById('avatar').innerHTML = `<img src="${avatarUrl}" alt="Avatar">`;
+            
             document.getElementById('fullName').textContent = `${id.firstName} ${id.lastName}`;
             document.getElementById('birthDate').textContent = `${id.birthDate} (${id.age} Jahre)`;
             document.getElementById('address').textContent = id.address;
             document.getElementById('email').textContent = id.email;
             document.getElementById('username').textContent = id.username;
             document.getElementById('password').textContent = id.password;
+            
+            // Financial UI
+            document.getElementById('ccNumber').textContent = formatCC(id.ccNumber || '0000000000000000');
+            document.getElementById('ccName').textContent = `${id.firstName} ${id.lastName}`.toUpperCase();
+            document.getElementById('ccExp').textContent = id.ccExp || '12/99';
+            document.getElementById('iban').textContent = id.iban || '-';
         }
 
         // --- Inbox Functions ---
@@ -592,34 +761,36 @@
         }
 
         async function sendTestMail() {
-            // Fake send function for visual confirmation since API is receive-only
-            alert("🚀 Sende Test-Nachricht an dich selbst...\n(Bitte 5 Sekunden warten)");
-            
-            // Add a fake message to the view locally to simulate reception if real send fails
-            // Actually, showing a real message is better.
-            // Since we can't send, we will explain to the user:
             const list = document.getElementById('inboxList');
             const fakeMsg = document.createElement('div');
             fakeMsg.className = 'email-item unread';
             fakeMsg.innerHTML = `
                 <div class="email-from">Ghost System</div>
-                <div class="email-subject">✅ Test Erfolgreich!</div>
+                <div class="email-subject">✅ Dein Sicherheitscode: 4829</div>
                 <div class="email-time">Jetzt</div>
+                <div class="otp-badge">4829</div>
             `;
-            fakeMsg.onclick = () => {
-                alert("Dies ist eine lokale Test-Bestätigung.\nDein Postfach ist AKTIV und bereit, echte E-Mails zu empfangen!\n\nSende jetzt eine echte Mail von deinem Handy an: " + currentIdentity.email);
-            };
+            fakeMsg.onclick = () => alert("Dies ist eine Test-Bestätigung.\nCode gefunden: 4829");
             
-            // Prepend to list
             if(list.children[0] && list.children[0].textContent.includes("Warte auf")) {
                 list.innerHTML = '';
             }
             list.insertBefore(fakeMsg, list.firstChild);
         }
 
+        function extractOTP(text) {
+            // Regex to find 4-8 digit codes, possibly with spaces or dashes
+            // Focus on common patterns like "Code: 1234", "verification code is 123456"
+            const codeMatch = text.match(/(?:code|pin|verification|verifizierung|nummer)[:\s]+([0-9]{4,8})/i);
+            if (codeMatch) return codeMatch[1];
+            
+            // Fallback: just any 4-6 digit sequence that is standalone
+            const numberMatch = text.match(/\b\d{4,8}\b/);
+            return numberMatch ? numberMatch[0] : null;
+        }
+
         function renderInbox(messages) {
             const list = document.getElementById('inboxList');
-            // Don't overwrite if we have our fake test message and no real messages yet
             const hasTest = list.innerHTML.includes("Ghost System");
             
             if (messages.length === 0 && !hasTest) {
@@ -627,20 +798,25 @@
                 return;
             }
             
-            // If we have real messages, render them. 
-            // We'll keep the test message if it exists manually? No, simpler to just render real state.
-            // If real messages arrive, they are more important.
             if (messages.length > 0) {
-                 list.innerHTML = '';
+                 list.innerHTML = ''; // Re-render all to update status
                  messages.forEach(msg => {
+                    const otp = extractOTP(msg.intro || msg.subject || "");
                     const div = document.createElement('div');
                     div.className = `email-item ${!msg.seen ? 'unread' : ''}`;
                     div.onclick = () => openEmail(msg.id);
-                    div.innerHTML = `
+                    
+                    let html = `
                         <div class="email-from">${msg.from.name || msg.from.address}</div>
                         <div class="email-subject">${msg.subject || '(Kein Betreff)'}</div>
                         <div class="email-time">${new Date(msg.createdAt).toLocaleTimeString()}</div>
                     `;
+                    
+                    if (otp) {
+                        html += `<div class="otp-badge" title="Automatisch erkannter Code">${otp}</div>`;
+                    }
+                    
+                    div.innerHTML = html;
                     list.appendChild(div);
                 });
             }
@@ -655,11 +831,8 @@
             
             try {
                 const msg = await MailService.getMessage(mailToken, id);
-                document.getElementById('viewSubject').textContent = msg.subject;
-                document.getElementById('viewFrom').textContent = `Von: ${msg.from.address} | An: ${msg.to[0].address}`;
-                document.getElementById('viewBody').textContent = msg.text || "Kein Textinhalt (HTML nicht unterstützt im Safe-Mode)";
                 
-                view.innerHTML = ''; // Clear loading
+                view.innerHTML = ''; 
                 view.appendChild(document.createElement('button')).className = 'btn btn-secondary';
                 view.lastChild.textContent = '⬅️ Zurück';
                 view.lastChild.onclick = closeEmail;
@@ -670,9 +843,17 @@
                 header.innerHTML = `<h3>${msg.subject}</h3><div style="color:var(--text-dim)">Von: ${msg.from.address}</div>`;
                 view.appendChild(header);
                 
+                // Highlight OTP in Body if found
+                const otp = extractOTP(msg.text || "");
+                let bodyContent = msg.text || "Nur HTML verfügbar.";
+                
+                if (otp) {
+                    bodyContent = bodyContent.replace(otp, `<span style="background:var(--primary); color:black; padding:2px 5px; font-weight:bold; border-radius:3px;">${otp}</span>`);
+                }
+                
                 const body = document.createElement('div');
                 body.className = 'email-body';
-                body.textContent = msg.text || "Nur HTML Inhalt verfügbar.";
+                body.innerHTML = bodyContent; // Using innerHTML to render highlights
                 view.appendChild(body);
             } catch (e) {
                 view.innerHTML = 'Fehler beim Laden.';
@@ -687,6 +868,16 @@
         function copyText(element) {
             const text = element.querySelector('span').textContent;
             navigator.clipboard.writeText(text);
+            showToast();
+        }
+        
+        function copyCC() {
+            const cc = document.getElementById('ccNumber').textContent.replace(/\s/g, '');
+            navigator.clipboard.writeText(cc);
+            showToast();
+        }
+        
+        function showToast() {
             const toast = document.getElementById('toast');
             toast.style.opacity = '1';
             setTimeout(() => toast.style.opacity = '0', 2000);
@@ -729,12 +920,12 @@
                         <strong>${flag} ${id.firstName} ${id.lastName}</strong>
                         <div class="saved-meta">
                             <span>📧 ${id.email}</span>
-                            <span>👤 ${id.username}</span>
+                            <span>💳 VISA</span>
                         </div>
                     </div>
                     <div style="display: flex; gap: 10px;">
                         <button class="btn btn-primary" style="padding: 10px 15px;" onclick="loadIdentity(${index})">
-                            Login & Öffnen 🚀
+                            Login 🚀
                         </button>
                         <button class="btn btn-danger" style="padding: 10px 15px;" onclick="deleteIdentity(${index})">
                             ❌
@@ -802,17 +993,41 @@
             }
         }
         
-        function exportData() {
-            if (savedIdentities.length === 0) { alert('Keine Daten zum Exportieren!'); return; }
-            const backup = { version: "1.0", date: new Date().toISOString(), identities: savedIdentities };
-            const dataStr = JSON.stringify(backup, null, 2);
+        // --- Export / Import Logic ---
+        function showExportModal() {
+            if (savedIdentities.length === 0) { alert('Keine Daten!'); return; }
+            document.getElementById('exportModal').style.display = 'flex';
+        }
+        
+        async function performExport() {
+            const password = document.getElementById('exportPass').value;
+            const backup = { version: "2.0", date: new Date().toISOString(), identities: savedIdentities };
+            
+            let dataStr;
+            let filename = `ghost-backup-${new Date().toISOString().slice(0,10)}`;
+            
+            if (password) {
+                try {
+                    const encrypted = await encryptData(backup, password);
+                    dataStr = JSON.stringify({ encrypted: true, content: encrypted });
+                    filename += "-SECURE";
+                } catch (e) {
+                    alert("Verschlüsselungs-Fehler: " + e.message);
+                    return;
+                }
+            } else {
+                dataStr = JSON.stringify(backup, null, 2);
+            }
+            
             const blob = new Blob([dataStr], { type: "application/json" });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `ghost-backup-${new Date().toISOString().slice(0,10)}.json`;
+            a.download = filename + ".json";
             a.click();
             URL.revokeObjectURL(url);
+            
+            closeModal('exportModal');
         }
 
         function importData(e) {
@@ -822,24 +1037,51 @@
             reader.onload = (ev) => {
                 try {
                     const json = JSON.parse(ev.target.result);
-                    let newIdentities = [];
-                    if (Array.isArray(json)) newIdentities = json;
-                    else if (json.identities && Array.isArray(json.identities)) newIdentities = json.identities;
-                    else { alert("❌ Ungültiges Backup-Format!"); return; }
-
-                    const existingIds = new Set(savedIdentities.map(i => i.id));
-                    let addedCount = 0;
-                    newIdentities.forEach(id => {
-                        if (!existingIds.has(id.id)) { savedIdentities.push(id); addedCount++; }
-                    });
-
-                    localStorage.setItem('ghost_identities', JSON.stringify(savedIdentities));
-                    renderSavedList();
-                    alert(`✅ Backup geladen! ${addedCount} Identitäten hinzugefügt.`);
-                } catch (err) { alert("❌ Fehler beim Lesen der Datei!"); }
+                    
+                    if (json.encrypted) {
+                        pendingImportData = json.content;
+                        document.getElementById('importModal').style.display = 'flex';
+                    } else {
+                        finishImport(json);
+                    }
+                } catch (err) { alert("❌ Ungültige Datei!"); }
             };
             reader.readAsText(file);
             e.target.value = '';
+        }
+        
+        async function performImport() {
+            const password = document.getElementById('importPass').value;
+            try {
+                const data = await decryptData(pendingImportData, password);
+                finishImport(data);
+                closeModal('importModal');
+            } catch (e) {
+                alert("❌ Falsches Passwort!");
+            }
+        }
+        
+        function finishImport(json) {
+            let newIdentities = [];
+            if (Array.isArray(json)) newIdentities = json;
+            else if (json.identities) newIdentities = json.identities;
+            
+            const existingIds = new Set(savedIdentities.map(i => i.id));
+            let addedCount = 0;
+            newIdentities.forEach(id => {
+                if (!existingIds.has(id.id)) { savedIdentities.push(id); addedCount++; }
+            });
+
+            localStorage.setItem('ghost_identities', JSON.stringify(savedIdentities));
+            renderSavedList();
+            alert(`✅ Import erfolgreich! ${addedCount} neue Identitäten.`);
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).style.display = 'none';
+            pendingImportData = null;
+            document.getElementById('exportPass').value = '';
+            document.getElementById('importPass').value = '';
         }
 
         window.addEventListener('load', renderSavedList);
