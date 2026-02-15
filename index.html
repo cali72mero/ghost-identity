@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🕵️ Ghost Identity | v2.1</title>
+    <title>🕵️ Ghost Identity | v2.2</title>
     <style>
         :root {
             --primary: #10b981;
@@ -15,8 +15,6 @@
             --border: #334155;
             --danger: #ef4444;
             --accent: #3b82f6;
-            --gold: #fbbf24;
-            --warn: #f59e0b;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -139,36 +137,6 @@
         }
         .info-value:hover { border-color: var(--primary); background: rgba(16, 185, 129, 0.1); }
         .info-value.loading { color: var(--text-dim); font-style: italic; }
-        
-        .finance-section {
-            grid-column: span 2;
-            margin-top: 10px;
-            padding-top: 20px;
-            border-top: 1px dashed var(--border);
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-        }
-        
-        .cc-card {
-            background: linear-gradient(135deg, #1e293b, #0f172a);
-            border: 1px solid var(--gold);
-            padding: 15px;
-            border-radius: 10px;
-            color: var(--gold);
-            position: relative;
-        }
-        .cc-logo { position: absolute; top: 10px; right: 15px; font-weight: bold; font-style: italic; }
-        .cc-number { font-size: 1.2rem; margin: 15px 0 5px; letter-spacing: 2px; font-family: monospace; }
-        .cc-name { font-size: 0.9rem; text-transform: uppercase; }
-        .cc-exp { position: absolute; bottom: 15px; right: 15px; font-family: monospace; }
-        
-        .cc-warning {
-            grid-column: span 2;
-            font-size: 0.8rem; color: var(--warn); text-align: center;
-            background: rgba(245, 158, 11, 0.1); padding: 5px; border-radius: 5px;
-            border: 1px solid var(--warn); margin-top: -10px;
-        }
 
         /* Inbox Styles */
         .inbox-section {
@@ -203,10 +171,6 @@
         }
         .email-item:hover { background: var(--bg-dark); }
         .email-item.unread { border-left: 3px solid var(--primary); background: rgba(16, 185, 129, 0.05); }
-        
-        .email-from { font-weight: bold; color: var(--text); }
-        .email-subject { color: var(--text-dim); font-size: 0.95rem; }
-        .email-time { font-size: 0.8rem; color: var(--text-dim); text-align: right; }
         
         .otp-badge {
             position: absolute; right: 20px; top: 50%; transform: translateY(-50%);
@@ -253,7 +217,7 @@
         @media (max-width: 768px) {
             .id-body { grid-template-columns: 1fr; text-align: center; }
             .avatar { margin: 0 auto; }
-            .info-grid, .finance-section { grid-template-columns: 1fr; text-align: left; }
+            .info-grid { grid-template-columns: 1fr; text-align: left; }
             .management-bar { flex-direction: column; align-items: stretch; }
             .saved-item { flex-direction: column; gap: 15px; align-items: flex-start; }
             .saved-item > div:last-child { width: 100%; display: flex; justify-content: space-between; }
@@ -263,10 +227,10 @@
 <body>
     <div class="container">
         <header>
-            <h1>🕵️ Ghost Identity <span class="version-badge">v2.1</span></h1>
+            <h1>🕵️ Ghost Identity <span class="version-badge">v2.2</span></h1>
             <p class="subtitle">Next-Gen Identity Generator & Secure Mail Client</p>
             <div style="margin-top: 15px; font-size: 0.9rem; color: var(--text-dim);">
-                🛡️ AES-256 Backups • 💳 Smart Data • ⚡ Auto-2FA
+                🛡️ AES-256 Backups • 🔞 14-80 Jahre • ⚡ Auto-2FA
             </div>
         </header>
 
@@ -359,22 +323,11 @@
                             <span class="copy-icon">📋</span>
                         </div>
                     </div>
-
-                    <!-- Finance Section -->
-                    <div class="finance-section">
-                        <div class="cc-warning">⚠️ Hinweis: Kreditkarte ist formal gültig, hat aber <strong>KEIN GUTHABEN</strong> (Test-Only)</div>
-                        <div class="cc-card" onclick="copyCC()">
-                            <div class="cc-logo">VISA</div>
-                            <div class="cc-number" id="ccNumber">4532 1234 5678 9012</div>
-                            <div class="cc-name" id="ccName">MAX MUSTERMANN</div>
-                            <div class="cc-exp" id="ccExp">12/28</div>
-                        </div>
-                        <div class="info-item">
-                            <div class="info-label">IBAN (Generiert)</div>
-                            <div class="info-value" onclick="copyText(this)">
-                                <span id="iban">-</span>
-                                <span class="copy-icon">📋</span>
-                            </div>
+                    <div class="info-item" style="grid-column: span 2;">
+                        <div class="info-label">IBAN (Zufall)</div>
+                        <div class="info-value" onclick="copyText(this)">
+                            <span id="iban">-</span>
+                            <span class="copy-icon">📋</span>
                         </div>
                     </div>
                 </div>
@@ -529,19 +482,6 @@
         }
 
         // --- Generators ---
-        function generateCC() {
-            let number = "4";
-            for(let i=0; i<14; i++) number += Math.floor(Math.random()*10);
-            let sum = 0; let shouldDouble = true; let digits = number.split('').map(Number);
-            for(let i=digits.length-1; i>=0; i--) {
-                let d = digits[i];
-                if(shouldDouble) { d *= 2; if(d > 9) d -= 9; }
-                sum += d; shouldDouble = !shouldDouble;
-            }
-            const checkDigit = (10 - (sum % 10)) % 10;
-            return number + checkDigit;
-        }
-        function formatCC(num) { return num.match(/.{1,4}/g).join(' '); }
         function generateIBAN(country) {
             const prefix = country.toUpperCase();
             return `${prefix}89 ${Math.floor(Math.random()*9999)} ${Math.floor(Math.random()*9999)} ${Math.floor(Math.random()*9999)} ${Math.floor(Math.random()*9999)}`;
@@ -619,7 +559,6 @@
             }
 
             const password = generatePassword(); 
-            const ccNum = generateCC();
             const iban = generateIBAN(country);
 
             currentIdentity = {
@@ -627,8 +566,6 @@
                 firstName, lastName, gender, country,
                 address: `${street} ${houseNum}, ${zip} ${city}`,
                 birthDate, age, username, password,
-                ccNumber: ccNum,
-                ccExp: `${Math.floor(Math.random()*12)+1}/${Math.floor(Math.random()*5)+26}`,
                 iban: iban,
                 email: "Erstelle E-Mail...",
                 createdAt: new Date().toISOString()
@@ -678,9 +615,6 @@
             document.getElementById('email').textContent = id.email;
             document.getElementById('username').textContent = id.username;
             document.getElementById('password').textContent = id.password;
-            document.getElementById('ccNumber').textContent = formatCC(id.ccNumber || '0000000000000000');
-            document.getElementById('ccName').textContent = `${id.firstName} ${id.lastName}`.toUpperCase();
-            document.getElementById('ccExp').textContent = id.ccExp || '12/99';
             document.getElementById('iban').textContent = id.iban || '-';
         }
 
@@ -761,7 +695,6 @@
 
         function closeEmail() { document.getElementById('inboxList').style.display = 'block'; document.getElementById('emailView').style.display = 'none'; }
         function copyText(element) { navigator.clipboard.writeText(element.querySelector('span').textContent); showToast(); }
-        function copyCC() { navigator.clipboard.writeText(document.getElementById('ccNumber').textContent.replace(/\s/g, '')); showToast(); }
         function showToast() { const toast = document.getElementById('toast'); toast.style.opacity = '1'; setTimeout(() => toast.style.opacity = '0', 2000); }
         function saveCurrentIdentity() {
             if (!currentIdentity) return;
@@ -780,7 +713,7 @@
             savedIdentities.forEach((id, index) => {
                 const item = document.createElement('div'); item.className = 'saved-item';
                 const flag = { de: '🇩🇪', us: '🇺🇸', gb: '🇬🇧', fr: '🇫🇷', jp: '🇯🇵' }[id.country] || '🌍';
-                item.innerHTML = `<div class="saved-info"><strong>${flag} ${id.firstName} ${id.lastName}</strong><div class="saved-meta"><span>📧 ${id.email}</span><span>💳 VISA</span></div></div><div style="display: flex; gap: 10px;"><button class="btn btn-primary" style="padding: 10px 15px;" onclick="loadIdentity(${index})">Login 🚀</button><button class="btn btn-danger" style="padding: 10px 15px;" onclick="deleteIdentity(${index})">❌</button></div>`;
+                item.innerHTML = `<div class="saved-info"><strong>${flag} ${id.firstName} ${id.lastName}</strong><div class="saved-meta"><span>📧 ${id.email}</span><span>🔢 IBAN</span></div></div><div style="display: flex; gap: 10px;"><button class="btn btn-primary" style="padding: 10px 15px;" onclick="loadIdentity(${index})">Login 🚀</button><button class="btn btn-danger" style="padding: 10px 15px;" onclick="deleteIdentity(${index})">❌</button></div>`;
                 list.appendChild(item);
             });
         }
@@ -799,7 +732,7 @@
         function clearAllData() { if (confirm('⚠️ ACHTUNG: Das löscht ALLE gespeicherten Identitäten vom Browser!')) { savedIdentities = []; currentIdentity = null; mailToken = null; localStorage.setItem('ghost_identities', '[]'); renderSavedList(); document.getElementById('identityCard').style.display = 'none'; } }
         function showExportModal() { if (savedIdentities.length === 0) { alert('Keine Daten!'); return; } document.getElementById('exportModal').style.display = 'flex'; }
         async function performExport() {
-            const password = document.getElementById('exportPass').value; const backup = { version: "2.1", date: new Date().toISOString(), identities: savedIdentities };
+            const password = document.getElementById('exportPass').value; const backup = { version: "2.2", date: new Date().toISOString(), identities: savedIdentities };
             let dataStr; let filename = `ghost-backup-${new Date().toISOString().slice(0,10)}`;
             if (password) {
                 try { const encrypted = await encryptData(backup, password); dataStr = JSON.stringify({ encrypted: true, content: encrypted }); filename += "-SECURE"; }
