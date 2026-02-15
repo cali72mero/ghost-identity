@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🕵️ Ghost Identity | v2.2</title>
+    <title>🕵️ Ghost Identity | v2.3</title>
     <style>
         :root {
             --primary: #10b981;
@@ -91,6 +91,8 @@
         .btn-secondary { background: var(--bg-panel); border: 1px solid var(--border); color: var(--text); }
         .btn-test { background: var(--primary); color: var(--bg-dark); border: none; padding: 5px 10px; font-size: 0.8rem; font-weight: bold; }
         .btn-refresh { background: var(--accent); color: white; border: none; padding: 5px 10px; font-size: 0.8rem; }
+        .btn-delete-mail { background: transparent; color: var(--danger); border: 1px solid var(--danger); padding: 5px 10px; font-size: 0.8rem; border-radius: 5px; cursor: pointer; }
+        .btn-delete-mail:hover { background: rgba(239, 68, 68, 0.1); }
 
         /* Identity Card */
         .identity-card {
@@ -166,17 +168,24 @@
             cursor: pointer;
             transition: background 0.2s;
             display: grid;
-            gap: 5px;
+            grid-template-columns: 1fr auto;
+            gap: 10px;
             position: relative;
+            align-items: center;
         }
         .email-item:hover { background: var(--bg-dark); }
         .email-item.unread { border-left: 3px solid var(--primary); background: rgba(16, 185, 129, 0.05); }
         
+        .email-content { display: grid; gap: 3px; }
+        .email-from { font-weight: bold; color: var(--text); }
+        .email-subject { color: var(--text-dim); font-size: 0.95rem; }
+        .email-time { font-size: 0.8rem; color: var(--text-dim); }
+        
         .otp-badge {
-            position: absolute; right: 20px; top: 50%; transform: translateY(-50%);
+            display: inline-block;
             background: var(--primary); color: var(--bg-dark); 
-            padding: 5px 10px; border-radius: 5px; font-weight: bold; font-family: monospace; font-size: 1.2rem;
-            box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+            padding: 2px 8px; border-radius: 4px; font-weight: bold; font-family: monospace; font-size: 0.9rem;
+            margin-left: 10px; vertical-align: middle;
         }
 
         .email-view { padding: 20px; background: var(--bg-dark); display: none; }
@@ -227,10 +236,10 @@
 <body>
     <div class="container">
         <header>
-            <h1>🕵️ Ghost Identity <span class="version-badge">v2.2</span></h1>
+            <h1>🕵️ Ghost Identity <span class="version-badge">v2.3</span></h1>
             <p class="subtitle">Next-Gen Identity Generator & Secure Mail Client</p>
             <div style="margin-top: 15px; font-size: 0.9rem; color: var(--text-dim);">
-                🛡️ AES-256 Backups • 🔞 14-80 Jahre • ⚡ Auto-2FA
+                🛡️ AES-256 Backups • 📥 E-Mail Archiv • ⚡ Auto-2FA
             </div>
         </header>
 
@@ -338,11 +347,12 @@
                 <div class="inbox-header">
                     <div style="display: flex; align-items: center; gap: 10px;">
                         <span class="live-dot active"></span>
-                        <strong>Posteingang</strong>
+                        <strong>Posteingang</strong> <span id="mailCount" style="font-size: 0.8rem; color: var(--text-dim);">(0)</span>
                     </div>
                     <div class="inbox-actions">
-                        <button class="btn btn-test" onclick="sendTestMail()">📨 Test-Mail</button>
-                        <button class="btn btn-refresh" onclick="checkMail()">🔄 Refresh</button>
+                        <button class="btn btn-test" onclick="sendTestMail()">📨 Test</button>
+                        <button class="btn btn-refresh" onclick="checkMail()">🔄</button>
+                        <button class="btn btn-danger" style="padding: 5px 10px; font-size: 0.8rem;" onclick="clearInbox()">🗑️</button>
                     </div>
                 </div>
                 <div class="inbox-list" id="inboxList">
@@ -363,7 +373,7 @@
             <!-- Save Button -->
             <div style="padding: 20px; background: rgba(0,0,0,0.2); text-align: center; border-top: 1px solid var(--border);">
                 <button class="btn btn-primary" onclick="saveCurrentIdentity()" style="width: auto;">
-                    💾 Identität & E-Mail Zugang speichern
+                    💾 Identität & E-Mail Verlauf speichern
                 </button>
             </div>
         </div>
@@ -454,6 +464,7 @@
         let mailToken = null;
         let pollInterval = null;
         let pendingImportData = null;
+        let currentMessages = [];
 
         // --- Crypto Utils (AES-GCM) ---
         async function encryptData(data, password) {
@@ -518,7 +529,7 @@
 
         async function generateIdentity() {
             if (pollInterval) clearInterval(pollInterval);
-            pollInterval = null; mailToken = null;
+            pollInterval = null; mailToken = null; currentMessages = [];
 
             const country = document.getElementById('country').value;
             const genderSelect = document.getElementById('gender').value;
@@ -568,7 +579,8 @@
                 birthDate, age, username, password,
                 iban: iban,
                 email: "Erstelle E-Mail...",
-                createdAt: new Date().toISOString()
+                createdAt: new Date().toISOString(),
+                savedEmails: [] // NEW: Store emails
             };
             
             updateUI(currentIdentity);
@@ -587,6 +599,7 @@
                     document.getElementById('email').textContent = emailAddress;
                     document.getElementById('email').classList.remove('loading');
                     document.getElementById('inboxSection').style.display = 'block';
+                    renderInbox([]);
                     startPolling();
                 } else {
                     document.getElementById('email').textContent = "Fehler bei E-Mail Erstellung";
@@ -625,21 +638,44 @@
         }
 
         async function checkMail() {
-            if (!mailToken) return;
+            if (!mailToken || !currentIdentity) return;
             try {
-                const messages = await MailService.getMessages(mailToken);
-                renderInbox(messages);
+                const newMessages = await MailService.getMessages(mailToken);
+                if (newMessages.length > 0) {
+                    // Merge new messages with saved ones, avoiding duplicates
+                    const savedIds = new Set(currentIdentity.savedEmails.map(m => m.id));
+                    let hasNew = false;
+                    
+                    for (const msg of newMessages) {
+                        if (!savedIds.has(msg.id)) {
+                            // Fetch full content immediately to save it
+                            const fullMsg = await MailService.getMessage(mailToken, msg.id);
+                            currentIdentity.savedEmails.unshift(fullMsg);
+                            hasNew = true;
+                        }
+                    }
+                    if (hasNew) {
+                        saveCurrentIdentity(false); // Silent save
+                        renderInbox(currentIdentity.savedEmails);
+                    }
+                }
             } catch (e) { console.log("Polling error", e); }
         }
 
         async function sendTestMail() {
-            const list = document.getElementById('inboxList');
-            const fakeMsg = document.createElement('div');
-            fakeMsg.className = 'email-item unread';
-            fakeMsg.innerHTML = `<div class="email-from">Ghost System</div><div class="email-subject">✅ Dein Sicherheitscode: 4829</div><div class="email-time">Jetzt</div><div class="otp-badge">4829</div>`;
-            fakeMsg.onclick = () => alert("Dies ist eine Test-Bestätigung.\nCode gefunden: 4829");
-            if(list.children[0] && list.children[0].textContent.includes("Warte auf")) list.innerHTML = '';
-            list.insertBefore(fakeMsg, list.firstChild);
+            if (!currentIdentity) return;
+            const fakeMsg = {
+                id: 'test-' + Date.now(),
+                from: { name: 'Ghost System', address: 'security@ghost.local' },
+                subject: '✅ Dein Sicherheitscode: 4829',
+                intro: 'Code: 4829',
+                text: 'Dein Code ist: 4829',
+                createdAt: new Date().toISOString(),
+                seen: false
+            };
+            currentIdentity.savedEmails.unshift(fakeMsg);
+            saveCurrentIdentity(false);
+            renderInbox(currentIdentity.savedEmails);
         }
 
         function extractOTP(text) {
@@ -651,88 +687,150 @@
 
         function renderInbox(messages) {
             const list = document.getElementById('inboxList');
-            const hasTest = list.innerHTML.includes("Ghost System");
-            if (messages.length === 0 && !hasTest) { list.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--text-dim);">Keine Nachrichten. Warte auf Empfang...</div>'; return; }
-            if (messages.length > 0) {
-                 list.innerHTML = ''; 
-                 messages.forEach(msg => {
-                    const otp = extractOTP(msg.intro || msg.subject || "");
-                    const div = document.createElement('div');
-                    div.className = `email-item ${!msg.seen ? 'unread' : ''}`;
-                    div.onclick = () => openEmail(msg.id);
-                    let html = `<div class="email-from">${msg.from.name || msg.from.address}</div><div class="email-subject">${msg.subject || '(Kein Betreff)'}</div><div class="email-time">${new Date(msg.createdAt).toLocaleTimeString()}</div>`;
-                    if (otp) html += `<div class="otp-badge" title="Automatisch erkannter Code">${otp}</div>`;
-                    div.innerHTML = html;
-                    list.appendChild(div);
-                });
+            document.getElementById('mailCount').textContent = `(${messages.length})`;
+            list.innerHTML = '';
+            
+            if (messages.length === 0) { 
+                list.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--text-dim);">Keine Nachrichten.</div>'; 
+                return; 
             }
+            
+            messages.forEach((msg, index) => {
+                const otp = extractOTP(msg.intro || msg.subject || msg.text || "");
+                const div = document.createElement('div');
+                div.className = `email-item ${!msg.seen ? 'unread' : ''}`;
+                
+                let html = `
+                    <div class="email-content" onclick="openEmail(${index})">
+                        <div class="email-from">${msg.from.name || msg.from.address} 
+                            ${otp ? `<span class="otp-badge">${otp}</span>` : ''}
+                        </div>
+                        <div class="email-subject">${msg.subject || '(Kein Betreff)'}</div>
+                        <div class="email-time">${new Date(msg.createdAt).toLocaleString()}</div>
+                    </div>
+                    <button class="btn-delete-mail" onclick="deleteEmail(${index})" title="Löschen">❌</button>
+                `;
+                div.innerHTML = html;
+                list.appendChild(div);
+            });
         }
 
-        async function openEmail(id) {
+        function openEmail(index) {
+            if (!currentIdentity || !currentIdentity.savedEmails[index]) return;
+            const msg = currentIdentity.savedEmails[index];
+            
             const list = document.getElementById('inboxList');
             const view = document.getElementById('emailView');
-            list.style.display = 'none'; view.style.display = 'block'; view.innerHTML = '<div class="loading">Lade Nachricht...</div>';
-            try {
-                const msg = await MailService.getMessage(mailToken, id);
-                view.innerHTML = ''; 
-                view.appendChild(document.createElement('button')).className = 'btn btn-secondary';
-                view.lastChild.textContent = '⬅️ Zurück';
-                view.lastChild.onclick = closeEmail;
-                view.lastChild.style.marginBottom = '15px';
-                const header = document.createElement('div');
-                header.className = 'email-view-header';
-                header.innerHTML = `<h3>${msg.subject}</h3><div style="color:var(--text-dim)">Von: ${msg.from.address}</div>`;
-                view.appendChild(header);
-                const otp = extractOTP(msg.text || "");
-                let bodyContent = msg.text || "Nur HTML verfügbar.";
-                if (otp) bodyContent = bodyContent.replace(otp, `<span style="background:var(--primary); color:black; padding:2px 5px; font-weight:bold; border-radius:3px;">${otp}</span>`);
-                const body = document.createElement('div');
-                body.className = 'email-body';
-                body.innerHTML = bodyContent;
-                view.appendChild(body);
-            } catch (e) { view.innerHTML = 'Fehler beim Laden.'; }
+            list.style.display = 'none'; view.style.display = 'block';
+            
+            document.getElementById('viewSubject').textContent = msg.subject;
+            document.getElementById('viewFrom').textContent = `Von: ${msg.from.address} (${new Date(msg.createdAt).toLocaleString()})`;
+            
+            const otp = extractOTP(msg.text || "");
+            let bodyContent = msg.text || msg.html || "Kein Inhalt.";
+            // Highlight OTP
+            if (otp) bodyContent = bodyContent.replace(otp, `<span style="background:var(--primary); color:black; padding:2px 5px; font-weight:bold; border-radius:3px;">${otp}</span>`);
+            
+            document.getElementById('viewBody').innerHTML = bodyContent;
+            
+            // Mark as seen
+            if (!msg.seen) {
+                msg.seen = true;
+                saveCurrentIdentity(false);
+                // Re-render list in background so it's updated when we go back
+                // renderInbox(currentIdentity.savedEmails); 
+            }
+        }
+        
+        function deleteEmail(index) {
+            if(!confirm("E-Mail wirklich löschen?")) return;
+            currentIdentity.savedEmails.splice(index, 1);
+            saveCurrentIdentity(false);
+            renderInbox(currentIdentity.savedEmails);
+        }
+        
+        function clearInbox() {
+            if(!confirm("Alle E-Mails dieser Identität unwiderruflich löschen?")) return;
+            currentIdentity.savedEmails = [];
+            saveCurrentIdentity(false);
+            renderInbox([]);
         }
 
-        function closeEmail() { document.getElementById('inboxList').style.display = 'block'; document.getElementById('emailView').style.display = 'none'; }
+        function closeEmail() { 
+            document.getElementById('inboxList').style.display = 'block'; 
+            document.getElementById('emailView').style.display = 'none'; 
+            renderInbox(currentIdentity.savedEmails); // Refresh to show 'read' status
+        }
+        
         function copyText(element) { navigator.clipboard.writeText(element.querySelector('span').textContent); showToast(); }
         function showToast() { const toast = document.getElementById('toast'); toast.style.opacity = '1'; setTimeout(() => toast.style.opacity = '0', 2000); }
-        function saveCurrentIdentity() {
+        
+        function saveCurrentIdentity(showAlert = true) {
             if (!currentIdentity) return;
             const exists = savedIdentities.some(id => id.id === currentIdentity.id);
             if (exists) { 
                 const index = savedIdentities.findIndex(id => id.id === currentIdentity.id);
-                if (mailToken) currentIdentity.mailToken = mailToken; savedIdentities[index] = currentIdentity; alert('✅ Identität aktualisiert!');
+                if (mailToken) currentIdentity.mailToken = mailToken; 
+                savedIdentities[index] = currentIdentity; 
+                if (showAlert) alert('✅ Identität & Verlauf aktualisiert!');
             } else {
-                if (mailToken) currentIdentity.mailToken = mailToken; savedIdentities.unshift(currentIdentity); alert('✅ Identität lokal gespeichert!');
+                if (mailToken) currentIdentity.mailToken = mailToken; 
+                savedIdentities.unshift(currentIdentity); 
+                if (showAlert) alert('✅ Identität lokal gespeichert!');
             }
-            localStorage.setItem('ghost_identities', JSON.stringify(savedIdentities)); renderSavedList();
+            localStorage.setItem('ghost_identities', JSON.stringify(savedIdentities)); 
+            renderSavedList();
         }
+        
         function renderSavedList() {
             const list = document.getElementById('savedList'); document.getElementById('savedCount').textContent = savedIdentities.length; list.innerHTML = '';
             if (savedIdentities.length === 0) { list.innerHTML = '<div style="padding:20px; text-align:center; color:var(--text-dim)">Keine Daten.</div>'; return; }
             savedIdentities.forEach((id, index) => {
                 const item = document.createElement('div'); item.className = 'saved-item';
                 const flag = { de: '🇩🇪', us: '🇺🇸', gb: '🇬🇧', fr: '🇫🇷', jp: '🇯🇵' }[id.country] || '🌍';
-                item.innerHTML = `<div class="saved-info"><strong>${flag} ${id.firstName} ${id.lastName}</strong><div class="saved-meta"><span>📧 ${id.email}</span><span>🔢 IBAN</span></div></div><div style="display: flex; gap: 10px;"><button class="btn btn-primary" style="padding: 10px 15px;" onclick="loadIdentity(${index})">Login 🚀</button><button class="btn btn-danger" style="padding: 10px 15px;" onclick="deleteIdentity(${index})">❌</button></div>`;
+                const mailCount = id.savedEmails ? id.savedEmails.length : 0;
+                item.innerHTML = `
+                    <div class="saved-info">
+                        <strong>${flag} ${id.firstName} ${id.lastName}</strong>
+                        <div class="saved-meta">
+                            <span>📧 ${id.email}</span>
+                            <span>📥 ${mailCount} Mails</span>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn btn-primary" style="padding: 10px 15px;" onclick="loadIdentity(${index})">Login 🚀</button>
+                        <button class="btn btn-danger" style="padding: 10px 15px;" onclick="deleteIdentity(${index})">❌</button>
+                    </div>`;
                 list.appendChild(item);
             });
         }
+        
         async function loadIdentity(index) {
             if (pollInterval) clearInterval(pollInterval); pollInterval = null;
-            const id = savedIdentities[index]; currentIdentity = id; updateUI(id);
+            const id = savedIdentities[index]; 
+            currentIdentity = id;
+            if (!currentIdentity.savedEmails) currentIdentity.savedEmails = [];
+            
+            updateUI(id);
+            renderInbox(currentIdentity.savedEmails);
+            
             document.getElementById('email').classList.add('loading'); document.getElementById('email').textContent = "Verbinde mit Postfach...";
             try {
-                if (id.mailToken) { mailToken = id.mailToken; await MailService.getMessages(mailToken); }
-                else { const token = await MailService.getToken(id.email, id.password); mailToken = token; id.mailToken = token; saveCurrentIdentity(); }
-                document.getElementById('email').textContent = id.email; document.getElementById('email').classList.remove('loading'); document.getElementById('inboxSection').style.display = 'block'; startPolling();
-            } catch (e) { console.error("Login failed", e); document.getElementById('email').textContent = id.email + " (Nicht erreichbar - evtl. gelöscht)"; mailToken = null; document.getElementById('inboxSection').style.display = 'none'; }
+                if (id.mailToken) { mailToken = id.mailToken; }
+                else { const token = await MailService.getToken(id.email, id.password); mailToken = token; id.mailToken = token; saveCurrentIdentity(false); }
+                document.getElementById('email').textContent = id.email; document.getElementById('email').classList.remove('loading'); document.getElementById('inboxSection').style.display = 'block'; 
+                
+                // Initial check immediately
+                checkMail();
+                startPolling();
+            } catch (e) { console.error("Login failed", e); document.getElementById('email').textContent = id.email + " (Nicht erreichbar - evtl. gelöscht)"; mailToken = null; document.getElementById('inboxSection').style.display = 'block'; /* Show saved mails even if offline */ }
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
         function deleteIdentity(index) { if (confirm('Wirklich löschen?')) { savedIdentities.splice(index, 1); localStorage.setItem('ghost_identities', JSON.stringify(savedIdentities)); renderSavedList(); if (savedIdentities.length === 0) document.getElementById('identityCard').style.display = 'none'; } }
         function clearAllData() { if (confirm('⚠️ ACHTUNG: Das löscht ALLE gespeicherten Identitäten vom Browser!')) { savedIdentities = []; currentIdentity = null; mailToken = null; localStorage.setItem('ghost_identities', '[]'); renderSavedList(); document.getElementById('identityCard').style.display = 'none'; } }
         function showExportModal() { if (savedIdentities.length === 0) { alert('Keine Daten!'); return; } document.getElementById('exportModal').style.display = 'flex'; }
         async function performExport() {
-            const password = document.getElementById('exportPass').value; const backup = { version: "2.2", date: new Date().toISOString(), identities: savedIdentities };
+            const password = document.getElementById('exportPass').value; const backup = { version: "2.3", date: new Date().toISOString(), identities: savedIdentities };
             let dataStr; let filename = `ghost-backup-${new Date().toISOString().slice(0,10)}`;
             if (password) {
                 try { const encrypted = await encryptData(backup, password); dataStr = JSON.stringify({ encrypted: true, content: encrypted }); filename += "-SECURE"; }
